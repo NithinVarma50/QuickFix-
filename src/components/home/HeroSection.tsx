@@ -1,12 +1,9 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Clock, Shield, Star } from 'lucide-react';
-
 const HeroSection: React.FC = () => {
-  return (
-    <div className="relative bg-gradient-to-br from-white to-quickfix-light-blue overflow-hidden">
+  return <div className="relative bg-gradient-to-br from-white to-quickfix-light-blue overflow-hidden">
       <div className="container mx-auto px-4 py-12 md:py-24">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div className="z-10 animate-slide-right">
@@ -54,11 +51,7 @@ const HeroSection: React.FC = () => {
           
           <div className="relative">
             <div className="relative z-10 rounded-lg shadow-xl overflow-hidden max-w-md mx-auto">
-              <img 
-                src="https://images.unsplash.com/photo-1562920618-5e5d01286c78?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                alt="Mechanic repairing a car"
-                className="w-full h-auto"
-              />
+              <img alt="Mechanic repairing a car" className="w-full h-auto" src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fmedium.com%2F%40SumeetKhanna%2Fwhat-are-the-characteristics-of-a-good-auto-repair-mechanic-c366d4473ef3&psig=AOvVaw0rJAH-H7uaxUTjRU9AlJlq&ust=1747323012559000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCIjl9c-jo40DFQAAAAAdAAAAABAE" />
             </div>
             {/* Decorative elements */}
             <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-quickfix-orange/20 rounded-full blur-xl"></div>
@@ -81,8 +74,6 @@ const HeroSection: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default HeroSection;
