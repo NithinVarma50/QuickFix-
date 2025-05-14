@@ -1,13 +1,10 @@
-
 import React from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import BookingForm from '@/components/booking/BookingForm';
 import { Phone, Clock, MapPin, ShieldCheck } from 'lucide-react';
-
 const BookingPage: React.FC = () => {
-  return (
-    <div className="flex flex-col min-h-screen">
+  return <div className="flex flex-col min-h-screen">
       <Navbar />
       <main className="flex-grow">
         {/* Booking Header */}
@@ -97,17 +94,13 @@ const BookingPage: React.FC = () => {
                 <p className="text-gray-700 mb-4">
                   For urgent repairs, call our emergency line and we'll dispatch a mechanic immediately.
                 </p>
-                <div className="font-bold text-xl text-quickfix-orange flex justify-center">
-                  +91 9876543210
-                </div>
+                <div className="font-bold text-xl text-quickfix-orange flex justify-center">+91 73374380</div>
               </div>
             </div>
           </div>
         </div>
       </main>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default BookingPage;
