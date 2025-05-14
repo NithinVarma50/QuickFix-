@@ -23,8 +23,8 @@ const CTASection: React.FC = () => {
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-              <a href="tel:+919381904726" className="flex items-center">
-                <Phone className="mr-2 h-5 w-5" /> Call Us Now
+              <a href="tel:+917337243180" className="flex items-center">
+                <Phone className="h-5 w-5" />
               </a>
             </Button>
           </div>

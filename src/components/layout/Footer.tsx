@@ -1,6 +1,8 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Twitter, MapPin, Phone, Mail } from 'lucide-react';
+import { MapPin, Phone, Mail } from 'lucide-react';
+
 const Footer: React.FC = () => {
   return <footer className="bg-quickfix-dark text-white">
       <div className="container mx-auto px-4 py-12">
@@ -11,17 +13,6 @@ const Footer: React.FC = () => {
             <p className="text-gray-300 mb-4">
               Your one-stop solution for vehicle repairs right at your doorstep. We make vehicle maintenance convenient and efficient.
             </p>
-            <div className="flex space-x-4">
-              <a href="https://facebook.com" className="text-gray-300 hover:text-quickfix-orange" aria-label="Facebook">
-                <Facebook size={20} />
-              </a>
-              <a href="https://instagram.com" className="text-gray-300 hover:text-quickfix-orange" aria-label="Instagram">
-                <Instagram size={20} />
-              </a>
-              <a href="https://twitter.com" className="text-gray-300 hover:text-quickfix-orange" aria-label="Twitter">
-                <Twitter size={20} />
-              </a>
-            </div>
           </div>
           
           {/* Quick Links */}
@@ -79,4 +70,5 @@ const Footer: React.FC = () => {
       </div>
     </footer>;
 };
+
 export default Footer;

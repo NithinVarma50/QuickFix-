@@ -1,13 +1,17 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, PhoneCall } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+  
   return <header className="sticky top-0 z-50 w-full bg-white shadow-sm">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         {/* Logo */}
@@ -34,9 +38,10 @@ const Navbar: React.FC = () => {
 
         {/* Phone Number - Desktop */}
         <div className="hidden md:flex items-center">
-          <Button variant="outline" className="flex items-center gap-2">
-            <PhoneCall className="h-4 w-4 text-quickfix-orange" />
-            <span>+91 7337243180</span>
+          <Button asChild variant="outline" className="flex items-center p-2" aria-label="Call Us">
+            <a href="tel:+917337243180">
+              <PhoneCall className="h-5 w-5 text-quickfix-orange" />
+            </a>
           </Button>
         </div>
       </div>
@@ -49,20 +54,23 @@ const Navbar: React.FC = () => {
             <MobileNavLink to="/about" onClick={toggleMenu}>About Us</MobileNavLink>
             <MobileNavLink to="/booking" onClick={toggleMenu}>Book Now</MobileNavLink>
             <div className="pt-3 border-t border-gray-200">
-              <Button className="w-full flex items-center justify-center gap-2" variant="outline">
-                <PhoneCall className="h-4 w-4 text-quickfix-orange" />
-                <span>+91 9381904726</span>
+              <Button asChild className="w-full flex items-center justify-center" variant="outline" aria-label="Call Us">
+                <a href="tel:+917337243180">
+                  <PhoneCall className="h-5 w-5 text-quickfix-orange" />
+                </a>
               </Button>
             </div>
           </nav>
         </div>}
     </header>;
 };
+
 interface NavLinkProps {
   to: string;
   children: React.ReactNode;
   className?: string;
 }
+
 const NavLink: React.FC<NavLinkProps> = ({
   to,
   children,
@@ -72,9 +80,11 @@ const NavLink: React.FC<NavLinkProps> = ({
       {children}
     </Link>;
 };
+
 interface MobileNavLinkProps extends NavLinkProps {
   onClick?: () => void;
 }
+
 const MobileNavLink: React.FC<MobileNavLinkProps> = ({
   to,
   children,
@@ -84,4 +94,5 @@ const MobileNavLink: React.FC<MobileNavLinkProps> = ({
       {children}
     </Link>;
 };
+
 export default Navbar;

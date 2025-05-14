@@ -5,7 +5,6 @@ import Footer from '@/components/layout/Footer';
 import HeroSection from '@/components/home/HeroSection';
 import ServicesSection from '@/components/home/ServicesSection';
 import HowItWorks from '@/components/home/HowItWorks';
-import TestimonialsSection from '@/components/home/TestimonialsSection';
 import ServiceAreas from '@/components/home/ServiceAreas';
 import CTASection from '@/components/home/CTASection';
 import MechanicRepairSection from '@/components/home/MechanicRepairSection';
@@ -19,7 +18,6 @@ const Index: React.FC = () => {
         <ServicesSection />
         <HowItWorks />
         <MechanicRepairSection />
-        <TestimonialsSection />
         <ServiceAreas />
         <CTASection />
       </main>
