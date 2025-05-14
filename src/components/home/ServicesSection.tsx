@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { 
   Battery, 
-  Oil, 
+  Droplet, 
   Timer, 
   Car, 
   Wrench, 
@@ -19,7 +19,7 @@ const services = [
     description: 'Jump starts, battery replacement, and electrical system diagnosis right at your location.'
   },
   {
-    icon: <Oil className="h-8 w-8" />,
+    icon: <Droplet className="h-8 w-8" />,
     title: 'Oil Change',
     description: 'Quick and clean oil changes with premium quality oil options for all vehicle types.'
   },

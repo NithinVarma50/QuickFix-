@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -8,7 +7,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { 
   Car, 
   Battery, 
-  Oil, 
+  Droplet, 
   Wrench, 
   Gauge, 
   Sparkles, 
@@ -34,7 +33,7 @@ const servicesData = [
   },
   {
     id: "oil",
-    icon: <Oil className="h-10 w-10" />,
+    icon: <Droplet className="h-10 w-10" />,
     title: "Oil Change Service",
     description: "Regular oil changes are essential for your engine's health. We offer comprehensive oil change services using premium quality oils.",
     includes: [
