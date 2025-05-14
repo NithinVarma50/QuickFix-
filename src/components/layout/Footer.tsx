@@ -1,8 +1,6 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail } from 'lucide-react';
-
 const Footer: React.FC = () => {
   return <footer className="bg-quickfix-dark text-white">
       <div className="container mx-auto px-4 py-12">
@@ -52,7 +50,7 @@ const Footer: React.FC = () => {
               </li>
               <li className="flex items-center">
                 <Mail size={20} className="mr-2 text-quickfix-orange flex-shrink-0" />
-                <span>info@quickfix.in</span>
+                <span>quickf825@gmail.com</span>
               </li>
             </ul>
           </div>
@@ -70,5 +68,4 @@ const Footer: React.FC = () => {
       </div>
     </footer>;
 };
-
 export default Footer;
