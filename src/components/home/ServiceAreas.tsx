@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MapPin, Phone, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,32 +6,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Textarea } from '@/components/ui/textarea';
-
-const locations = [
-  "Hitech City", 
-  "Gachibowli", 
-  "Kukatpally", 
-  "Madhapur", 
-  "Jubilee Hills", 
-  "Banjara Hills", 
-  "Secunderabad", 
-  "Begumpet", 
-  "Ameerpet", 
-  "KPHB",
-  "Shamshabad",
-  "Kondapur"
-];
-
+const locations = ["Hitech City", "Gachibowli", "Kukatpally", "Madhapur", "Jubilee Hills", "Banjara Hills", "Secunderabad", "Begumpet", "Ameerpet", "KPHB", "Shamshabad", "Kondapur"];
 const ServiceAreas: React.FC = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [service, setService] = useState('');
   const [location, setLocation] = useState('');
   const [message, setMessage] = useState('');
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Format the WhatsApp message
     const whatsappMessage = `*New Service Booking*%0A
 *Name:* ${name}%0A
@@ -40,16 +23,16 @@ const ServiceAreas: React.FC = () => {
 *Service:* ${service}%0A
 *Location:* ${location}%0A
 *Message:* ${message}`;
-    
+
     // Create WhatsApp URL with formatted message
     const whatsappURL = `https://wa.me/919381904726?text=${whatsappMessage}`;
-    
+
     // Open WhatsApp in a new tab
     window.open(whatsappURL, '_blank');
-    
+
     // Show success message
     toast.success("Booking request sent via WhatsApp");
-    
+
     // Reset form
     setName('');
     setPhone('');
@@ -57,9 +40,7 @@ const ServiceAreas: React.FC = () => {
     setLocation('');
     setMessage('');
   };
-
-  return (
-    <section className="py-16 bg-white">
+  return <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -70,18 +51,16 @@ const ServiceAreas: React.FC = () => {
               </p>
               
               <div className="grid grid-cols-2 gap-x-8 gap-y-3">
-                {locations.map((locationName, index) => (
-                  <div key={index} className="flex items-center">
+                {locations.map((locationName, index) => <div key={index} className="flex items-center">
                     <MapPin className="h-5 w-5 text-quickfix-orange mr-2" />
                     <span>{locationName}</span>
-                  </div>
-                ))}
+                  </div>)}
               </div>
               
               <div className="mt-8">
                 <div className="flex items-center mb-4">
                   <Phone className="h-5 w-5 text-quickfix-orange mr-2" />
-                  <span className="font-medium">Call us at: +91 9381904726</span>
+                  <span className="font-medium">Call us at: +91 7337243180</span>
                 </div>
               </div>
             </div>
@@ -95,58 +74,27 @@ const ServiceAreas: React.FC = () => {
                   <div className="space-y-4">
                     <div>
                       <Label htmlFor="name">Name</Label>
-                      <Input 
-                        id="name" 
-                        value={name} 
-                        onChange={(e) => setName(e.target.value)} 
-                        placeholder="Your Name" 
-                        required
-                      />
+                      <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Your Name" required />
                     </div>
                     
                     <div>
                       <Label htmlFor="phone">Phone Number</Label>
-                      <Input 
-                        id="phone" 
-                        value={phone} 
-                        onChange={(e) => setPhone(e.target.value)} 
-                        placeholder="Your Phone Number" 
-                        required
-                      />
+                      <Input id="phone" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Your Phone Number" required />
                     </div>
                     
                     <div>
                       <Label htmlFor="service">Service Required</Label>
-                      <Input 
-                        id="service" 
-                        value={service} 
-                        onChange={(e) => setService(e.target.value)} 
-                        placeholder="What service do you need?" 
-                        required
-                      />
+                      <Input id="service" value={service} onChange={e => setService(e.target.value)} placeholder="What service do you need?" required />
                     </div>
                     
                     <div>
                       <Label htmlFor="location">Your Location</Label>
-                      <Input 
-                        id="location" 
-                        value={location} 
-                        onChange={(e) => setLocation(e.target.value)} 
-                        placeholder="Your Area in Hyderabad" 
-                        required
-                      />
+                      <Input id="location" value={location} onChange={e => setLocation(e.target.value)} placeholder="Your Area in Hyderabad" required />
                     </div>
                     
                     <div>
                       <Label htmlFor="message">Additional Details (Optional)</Label>
-                      <Textarea 
-                        id="message" 
-                        value={message} 
-                        onChange={(e) => setMessage(e.target.value)} 
-                        placeholder="Any specific issues or requirements"
-                        className="resize-none"
-                        rows={3}
-                      />
+                      <Textarea id="message" value={message} onChange={e => setMessage(e.target.value)} placeholder="Any specific issues or requirements" className="resize-none" rows={3} />
                     </div>
                     
                     <Button type="submit" className="w-full bg-quickfix-blue hover:bg-quickfix-blue/90 flex items-center justify-center">
@@ -163,12 +111,8 @@ const ServiceAreas: React.FC = () => {
           <div className="mt-16">
             <h3 className="text-2xl font-bold mb-6 text-center">Our Service Coverage in Hyderabad</h3>
             <div className="rounded-lg overflow-hidden shadow-lg border border-gray-200">
-              <AspectRatio ratio={16/9} className="bg-muted">
-                <img 
-                  src="/lovable-uploads/c9d4e9bb-b3ea-4595-9b75-1108b5f42367.png" 
-                  alt="QuickFix Service Areas in Hyderabad"
-                  className="object-cover w-full h-full"
-                />
+              <AspectRatio ratio={16 / 9} className="bg-muted">
+                <img src="/lovable-uploads/c9d4e9bb-b3ea-4595-9b75-1108b5f42367.png" alt="QuickFix Service Areas in Hyderabad" className="object-cover w-full h-full" />
               </AspectRatio>
             </div>
             <p className="text-center text-gray-500 mt-4">
@@ -177,8 +121,6 @@ const ServiceAreas: React.FC = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default ServiceAreas;
