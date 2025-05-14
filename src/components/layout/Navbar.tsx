@@ -1,17 +1,13 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, PhoneCall } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-  
   return <header className="sticky top-0 z-50 w-full bg-white shadow-sm">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         {/* Logo */}
@@ -39,7 +35,7 @@ const Navbar: React.FC = () => {
         {/* Phone Number - Desktop */}
         <div className="hidden md:flex items-center">
           <Button asChild variant="outline" className="flex items-center p-2" aria-label="Call Us">
-            <a href="tel:+917337243180">
+            <a href="tel:+917337243180" className="that button should work to this number (7337243180)">
               <PhoneCall className="h-5 w-5 text-quickfix-orange" />
             </a>
           </Button>
@@ -64,13 +60,11 @@ const Navbar: React.FC = () => {
         </div>}
     </header>;
 };
-
 interface NavLinkProps {
   to: string;
   children: React.ReactNode;
   className?: string;
 }
-
 const NavLink: React.FC<NavLinkProps> = ({
   to,
   children,
@@ -80,11 +74,9 @@ const NavLink: React.FC<NavLinkProps> = ({
       {children}
     </Link>;
 };
-
 interface MobileNavLinkProps extends NavLinkProps {
   onClick?: () => void;
 }
-
 const MobileNavLink: React.FC<MobileNavLinkProps> = ({
   to,
   children,
@@ -94,5 +86,4 @@ const MobileNavLink: React.FC<MobileNavLinkProps> = ({
       {children}
     </Link>;
 };
-
 export default Navbar;
