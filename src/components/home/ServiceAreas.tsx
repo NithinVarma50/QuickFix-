@@ -25,7 +25,7 @@ const ServiceAreas: React.FC = () => {
 *Message:* ${message}`;
 
     // Create WhatsApp URL with formatted message
-    const whatsappURL = `https://wa.me/919381904726?text=${whatsappMessage}`;
+    const whatsappURL = `https://wa.me/7337243180?text=${whatsappMessage}`;
 
     // Open WhatsApp in a new tab
     window.open(whatsappURL, '_blank');
