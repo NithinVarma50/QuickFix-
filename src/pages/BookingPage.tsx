@@ -38,7 +38,7 @@ const BookingPage: React.FC = () => {
                     <Phone className="h-5 w-5 text-quickfix-orange mt-1 mr-3" />
                     <div>
                       <p className="font-medium">Call us directly</p>
-                      <p className="text-gray-600">+91 9876543210</p>
+                      <p className="text-gray-600">+91 7337243180</p>
                     </div>
                   </div>
                   
@@ -47,7 +47,7 @@ const BookingPage: React.FC = () => {
                     <div>
                       <p className="font-medium">Working Hours</p>
                       <p className="text-gray-600">Mon-Sat: 8:00 AM - 8:00 PM</p>
-                      <p className="text-gray-600">Sunday: 9:00 AM - 5:00 PM</p>
+                      <p className="text-gray-600">Sunday: 9:00 AM - 8:00 PM</p>
                     </div>
                   </div>
                   
