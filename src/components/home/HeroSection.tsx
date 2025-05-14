@@ -51,7 +51,7 @@ const HeroSection: React.FC = () => {
           
           <div className="relative">
             <div className="relative z-10 rounded-lg shadow-xl overflow-hidden max-w-md mx-auto">
-              <img alt="Mechanic repairing a car" className="w-full h-auto" src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fmedium.com%2F%40SumeetKhanna%2Fwhat-are-the-characteristics-of-a-good-auto-repair-mechanic-c366d4473ef3&psig=AOvVaw0rJAH-H7uaxUTjRU9AlJlq&ust=1747323012559000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCIjl9c-jo40DFQAAAAAdAAAAABAE" />
+              <img alt="Mechanic repairing a car" className="w-full h-auto" src="/lovable-uploads/466290a8-6fb0-4d58-9e30-6a1de3da28b0.jpg" />
             </div>
             {/* Decorative elements */}
             <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-quickfix-orange/20 rounded-full blur-xl"></div>
