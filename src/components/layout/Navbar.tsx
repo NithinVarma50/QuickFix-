@@ -41,7 +41,7 @@ const Navbar: React.FC = () => {
         <div className="hidden md:flex items-center">
           <Button variant="outline" className="flex items-center gap-2">
             <PhoneCall className="h-4 w-4 text-quickfix-orange" />
-            <span>+91 9876543210</span>
+            <span>+91 7337243180</span>
           </Button>
         </div>
       </div>
@@ -57,7 +57,7 @@ const Navbar: React.FC = () => {
             <div className="pt-3 border-t border-gray-200">
               <Button className="w-full flex items-center justify-center gap-2" variant="outline">
                 <PhoneCall className="h-4 w-4 text-quickfix-orange" />
-                <span>+91 9876543210</span>
+                <span>+91 7337243180</span>
               </Button>
             </div>
           </nav>

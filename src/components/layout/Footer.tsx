@@ -60,7 +60,7 @@ const Footer: React.FC = () => {
               </li>
               <li className="flex items-center">
                 <Phone size={20} className="mr-2 text-quickfix-orange flex-shrink-0" />
-                <span>+91 9876543210</span>
+                <span>+91 7337243180</span>
               </li>
               <li className="flex items-center">
                 <Mail size={20} className="mr-2 text-quickfix-orange flex-shrink-0" />
