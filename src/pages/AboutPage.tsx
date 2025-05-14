@@ -36,7 +36,7 @@ const AboutPage: React.FC = () => {
               <div>
                 <h2 className="text-2xl md:text-3xl font-bold mb-6 font-heading">Our Story</h2>
                 <p className="text-gray-600 mb-4">
-                  QuickFix was founded in 2021 with a simple mission: to make vehicle maintenance and repair as convenient as possible for busy car owners in Hyderabad.
+                  QuickFix was founded with a simple mission: to make vehicle maintenance and repair as convenient as possible for busy car owners in Hyderabad.
                 </p>
                 <p className="text-gray-600 mb-4">
                   Our founders, who had extensive experience in the automotive industry, recognized that traditional repair shops often meant long waits, inconvenient hours, and sometimes unclear pricing. They envisioned a service that would bring expert mechanics directly to customers, saving them time and hassle.
@@ -50,20 +50,67 @@ const AboutPage: React.FC = () => {
               </div>
               <div className="relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1581093458791-9d15482441a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                  alt="QuickFix team of mechanics"
+                  src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
+                  alt="QuickFix mechanics at work"
                   className="rounded-lg shadow-lg w-full h-auto"
                 />
-                <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-quickfix-orange rounded-full flex items-center justify-center text-white font-bold shadow-lg p-2 text-center">
-                  Since 2021
-                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        {/* Team Section */}
+        <section className="py-16 bg-quickfix-light-blue">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl md:text-3xl font-bold mb-4 font-heading">QuickFix Founding Team</h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Meet the visionaries behind our mission
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="text-xl font-semibold mb-2">Saiteja</h3>
+                <h4 className="text-quickfix-orange font-medium mb-3">Founder & CEO</h4>
+                <p className="text-gray-600 mb-3">
+                  The mind behind the mission — leads vision, service innovation, and business development.
+                </p>
+                <p className="text-gray-600 mb-3">
+                  Drives daily operations, partnerships, pricing models, and future expansion (mobile van services incoming!).
+                </p>
+                <p className="text-gray-600">
+                  Focused on building a trusted, scalable brand for doorstep vehicle repair.
+                </p>
+              </div>
+              
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="text-xl font-semibold mb-2">Karthik</h3>
+                <h4 className="text-quickfix-orange font-medium mb-3">Co-Founder & Operations Lead</h4>
+                <p className="text-gray-600 mb-3">
+                  Handles all things on-ground — vehicle pickup/drop logistics, customer coordination, and mechanic relations.
+                </p>
+                <p className="text-gray-600">
+                  Ensures smooth service flow and customer satisfaction at every touchpoint. The backbone of execution and day-to-day hustle.
+                </p>
+              </div>
+              
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="text-xl font-semibold mb-2">Nithin Varma</h3>
+                <h4 className="text-quickfix-orange font-medium mb-3">COO, Tech Lead & Strategy Builder</h4>
+                <p className="text-gray-600 mb-3">
+                  Oversees product architecture and technical direction.
+                </p>
+                <p className="text-gray-600">
+                  Leads strategic planning and operational efficiency across the company.
+                </p>
               </div>
             </div>
           </div>
         </section>
         
         {/* Mission & Values */}
-        <section className="py-16 bg-quickfix-light-blue">
+        <section className="py-16">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-2xl md:text-3xl font-bold mb-4 font-heading">Our Mission & Values</h2>
@@ -107,7 +154,7 @@ const AboutPage: React.FC = () => {
         </section>
         
         {/* Future Plans */}
-        <section className="py-16">
+        <section className="py-16 bg-quickfix-light-blue">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto">
               <div className="text-center mb-10">
@@ -167,7 +214,7 @@ const AboutPage: React.FC = () => {
                     <Phone className="h-6 w-6 text-quickfix-orange mt-1 mr-3" />
                     <div>
                       <h3 className="font-semibold mb-1">Phone</h3>
-                      <p className="text-gray-600">Customer Service: +91 9381904726</p>
+                      <p className="text-gray-600">Customer Service: +91 7337243180</p>
                     </div>
                   </div>
                   
@@ -193,9 +240,14 @@ const AboutPage: React.FC = () => {
                   </div>
                 </div>
                 
-                <div className="mt-8">
+                <div className="mt-8 space-y-4">
                   <Button asChild className="w-full bg-quickfix-blue hover:bg-quickfix-blue/90">
                     <Link to="/booking">Book a Service</Link>
+                  </Button>
+                  <Button asChild variant="outline" className="w-full border-quickfix-orange text-quickfix-orange hover:bg-quickfix-orange/10">
+                    <a href="https://wa.me/917337243180" target="_blank" rel="noopener noreferrer">
+                      Contact via WhatsApp
+                    </a>
                   </Button>
                 </div>
               </div>
