@@ -167,8 +167,7 @@ const AboutPage: React.FC = () => {
                     <Phone className="h-6 w-6 text-quickfix-orange mt-1 mr-3" />
                     <div>
                       <h3 className="font-semibold mb-1">Phone</h3>
-                      <p className="text-gray-600">Customer Service: +91 9876543210</p>
-                      <p className="text-gray-600">Emergency Service: +91 9876543211</p>
+                      <p className="text-gray-600">Customer Service: +91 9381904726</p>
                     </div>
                   </div>
                   
@@ -186,7 +185,7 @@ const AboutPage: React.FC = () => {
                     <MapPin className="h-6 w-6 text-quickfix-orange mt-1 mr-3" />
                     <div>
                       <h3 className="font-semibold mb-1">Office Address</h3>
-                      <p className="text-gray-600">123 High-tech City, Hyderabad, Telangana, India - 500081</p>
+                      <p className="text-gray-600">Street No. 01, Kranti Colony, Telephone Colony, Chengicherla, Secunderabad, Telangana 500098</p>
                       <p className="text-gray-600 mt-2">
                         <span className="font-medium">Hours:</span> Monday-Saturday: 9 AM - 6 PM
                       </p>
@@ -204,7 +203,7 @@ const AboutPage: React.FC = () => {
               <div className="relative h-full min-h-[300px]">
                 <iframe
                   title="QuickFix Location"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d30452.55606986624!2d78.36673726744385!3d17.44516089999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb93dc8c5d69df%3A0x193bfc38ddb5d32e!2sHITEC%20City%2C%20Hyderabad%2C%20Telangana!5e0!3m2!1sen!2sin!4v1651649165317!5m2!1sen!2sin"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.455422781893!2d78.5761613!3d17.441797!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb9f12e00f36e5%3A0x7b525649014e2dd4!2sTelephone%20Colony%2C%20Chengicherla%2C%20Secunderabad%2C%20Telangana%20500098!5e0!3m2!1sen!2sin!4v1651649165317!5m2!1sen!2sin"
                   className="absolute inset-0 w-full h-full rounded-lg shadow-md"
                   frameBorder="0"
                   style={{ border: 0 }}

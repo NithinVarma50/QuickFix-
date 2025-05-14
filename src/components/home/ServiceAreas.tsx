@@ -42,7 +42,7 @@ const ServiceAreas: React.FC = () => {
 *Message:* ${message}`;
     
     // Create WhatsApp URL with formatted message
-    const whatsappURL = `https://wa.me/917337243180?text=${whatsappMessage}`;
+    const whatsappURL = `https://wa.me/919381904726?text=${whatsappMessage}`;
     
     // Open WhatsApp in a new tab
     window.open(whatsappURL, '_blank');
@@ -81,7 +81,7 @@ const ServiceAreas: React.FC = () => {
               <div className="mt-8">
                 <div className="flex items-center mb-4">
                   <Phone className="h-5 w-5 text-quickfix-orange mr-2" />
-                  <span className="font-medium">Call us at: +91 7337243180</span>
+                  <span className="font-medium">Call us at: +91 9381904726</span>
                 </div>
               </div>
             </div>
