@@ -94,7 +94,9 @@ const BookingPage: React.FC = () => {
                 <p className="text-gray-700 mb-4">
                   For urgent repairs, call our emergency line and we'll dispatch a mechanic immediately.
                 </p>
-                <div className="font-bold text-xl text-quickfix-orange flex justify-center">+91 73374380</div>
+                <div className="font-bold text-xl text-quickfix-orange flex justify-center">+91 7337243180
+
+              </div>
               </div>
             </div>
           </div>
