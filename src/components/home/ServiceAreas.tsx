@@ -66,7 +66,7 @@ const ServiceAreas: React.FC = () => {
             </div>
             
             <div>
-              <div className="bg-quickfix-light-blue p-6 rounded-lg shadow-md\nform should work to this whatsapp number(7337243180)">
+              <div className="bg-quickfix-light-blue p-6 rounded-lg shadow-md\\nform ">
                 <h3 className="text-xl font-bold mb-4">Book via WhatsApp</h3>
                 <p className="text-gray-600 mb-4">Fill in the details below to quickly book a service through WhatsApp</p>
                 
