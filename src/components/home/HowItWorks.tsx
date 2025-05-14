@@ -21,7 +21,7 @@ const steps = [
   {
     icon: <CheckCircle className="h-12 w-12 text-quickfix-orange" />,
     title: 'Back on the Road',
-    description: 'Your vehicle is fixed, tested, and ready to go. Pay only after you're satisfied with the service.'
+    description: "Your vehicle is fixed, tested, and ready to go. Pay only after you're satisfied with the service."
   }
 ];
 
