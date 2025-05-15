@@ -7,14 +7,13 @@ import HowItWorks from '@/components/home/HowItWorks';
 import ServiceAreas from '@/components/home/ServiceAreas';
 import CTASection from '@/components/home/CTASection';
 import MechanicRepairSection from '@/components/home/MechanicRepairSection';
-import { Chatbot } from '@/components/ui/chatbot';
+
 const Index: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <main className="flex-grow">
         <HeroSection />
-        <Chatbot />
         <ServicesSection />
         <HowItWorks />
         <MechanicRepairSection />
