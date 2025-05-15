@@ -22,6 +22,24 @@ const Chatbot: React.FC = () => {
     setChatHistory(prev => [...prev, `Bot: ${solution}`]);
     setChatInput('');
   };
-  return;
+  return (
+    <div>
+      <div>
+        {chatHistory.map((message, index) => (
+          <p key={index}>{message}</p>
+        ))}
+      </div>
+      <input
+        type="text"
+        value={chatInput}
+        onChange={(e) => setChatInput(e.target.value)}
+        placeholder="Type your message..."
+      />
+      <button onClick={handleSend}>
+        <MessageCircle />
+        Send
+      </button>
+    </div>
+  );
 };
 export default Chatbot;
