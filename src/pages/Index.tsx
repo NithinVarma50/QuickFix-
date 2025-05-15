@@ -16,7 +16,7 @@ const Index: React.FC = () => {
       <main className="flex-grow">
         <HeroSection />
         <Chatbot />
-        <ServicesSection />
+        git add .        git add .        git add .        git add .        <ServicesSection />
         <HowItWorks />
         <MechanicRepairSection />
         <ServiceAreas />
