@@ -36,16 +36,29 @@ const AboutPage: React.FC = () => {
               <div>
                 <h2 className="text-2xl md:text-3xl font-bold mb-6 font-heading">Our Story</h2>
                 <p className="text-gray-600 mb-4">
-                  QuickFix was founded with a simple mission: to make vehicle maintenance and repair as convenient as possible for busy car owners in Hyderabad.
+                  QuickFix was born out of a real problem — vehicle repairs in Hyderabad were either too slow, too confusing, or too far away. We knew there had to be a better way.
                 </p>
                 <p className="text-gray-600 mb-4">
-                  Our founders, who had extensive experience in the automotive industry, recognized that traditional repair shops often meant long waits, inconvenient hours, and sometimes unclear pricing. They envisioned a service that would bring expert mechanics directly to customers, saving them time and hassle.
+                  So, we started small — just three of us with a dream, a few tools, and one goal:
+                  make vehicle repair simple, accessible, and trustworthy.
                 </p>
                 <p className="text-gray-600 mb-4">
-                  Starting with a small team of certified mechanics and a focus on excellent customer service, QuickFix quickly gained popularity. Today, we're proud to serve thousands of customers across Hyderabad, with plans to expand to other major cities in India.
+                  With no fancy funding or flashy garage, we began by helping people with quick fixes — a headlight here, a battery jump there — all handled with care and speed. Every customer mattered. Every rupee earned was proof that the idea worked.
                 </p>
+                <p className="text-gray-600 mb-4">
+                  We're still in the early stages, but we've already:
+                </p>
+                <ul className="list-disc pl-5 text-gray-600 mb-4">
+                  <li className="mb-2">Built our own website and booking platform</li>
+                  <li className="mb-2">Completed our first few paid orders</li>
+                  <li className="mb-2">Laid the foundation for mobile repair vans and franchise expansion</li>
+                </ul>
                 <p className="text-gray-600">
-                  Our commitment to quality service, transparent pricing, and customer convenience remains at the heart of everything we do.
+                  QuickFix is not just about fixing vehicles — it's about rebuilding trust in repair services. Our mission is clear:
+                  to bring fast, transparent, doorstep repairs to every vehicle owner in India — starting with Hyderabad.
+                </p>
+                <p className="text-gray-600 mt-4 italic font-medium">
+                  The journey's just begun, and the road ahead is wide open.
                 </p>
               </div>
               <div className="relative">
