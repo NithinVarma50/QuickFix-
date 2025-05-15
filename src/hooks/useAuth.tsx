@@ -1,8 +1,11 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
-import { User, Session } from "@supabase/supabase-js";
+import { User as SupabaseUser, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+
+type User = SupabaseUser & {
+  name?: string;
+};
 
 interface AuthContextType {
   user: User | null;
@@ -16,6 +19,7 @@ interface AuthContextType {
     data: any | null;
   }>;
   signOut: () => Promise<void>;
+  login: () => void;
   loading: boolean;
 }
 
@@ -72,8 +76,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     navigate('/auth');
   };
 
+  const login = async () => {
+    navigate('/auth');
+  };
+
   return (
-    <AuthContext.Provider value={{ user, session, signUp, signIn, signOut, loading }}>
+    <AuthContext.Provider
+      value={{
+        user: user ? { ...user, name: user.user_metadata?.first_name || 'User' } : null,
+        session,
+        signUp,
+        signIn,
+        signOut,
+        login,
+        loading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
