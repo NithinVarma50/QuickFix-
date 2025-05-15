@@ -86,22 +86,22 @@ export type Database = {
       }
       vehicle_problems: {
         Row: {
-          id: string
-          problem: string
-          solution: string
-        }
+          id: string;
+          problem: string;
+          solution: string;
+        };
         Insert: {
-          id?: string
-          problem: string
-          solution: string
-        }
+          id?: string;
+          problem: string;
+          solution: string;
+        };
         Update: {
-          id?: string
-          problem?: string
-          solution?: string
-        }
-        Relationships: []
-      }
+          id?: string;
+          problem?: string;
+          solution?: string;
+        };
+        Relationships: [];
+      };
     }
     Views: {
       [_ in never]: never
