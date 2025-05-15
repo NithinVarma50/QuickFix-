@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Send } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
