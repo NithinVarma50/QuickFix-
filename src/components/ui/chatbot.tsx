@@ -26,7 +26,7 @@ const Chatbot: React.FC = () => {
       <div>
         {chatHistory.map((message, index) => <p key={index}>{message}</p>)}
       </div>
-      <input type="text" value={chatInput} onChange={e => setChatInput(e.target.value)} placeholder="Type your message..." />
+      
       
     </div>;
 };
