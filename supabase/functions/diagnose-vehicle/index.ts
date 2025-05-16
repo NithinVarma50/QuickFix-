@@ -58,8 +58,8 @@ serve(async (req) => {
       throw new Error("GEMINI_API_KEY is not set in environment variables");
     }
 
-    // Construct the API request for Gemini - using the correct model name
-    const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=' + geminiApiKey, {
+    // Construct the API request for Gemini - using the correct model name format
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=' + geminiApiKey, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
