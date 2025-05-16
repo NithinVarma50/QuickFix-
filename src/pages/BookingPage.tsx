@@ -92,11 +92,17 @@ const BookingPage: React.FC = () => {
               <div className="bg-quickfix-orange/10 border border-quickfix-orange rounded-lg p-6">
                 <h3 className="text-lg font-semibold mb-2">Need Emergency Service?</h3>
                 <p className="text-gray-700 mb-4">
-                  For urgent repairs, call our emergency line and we'll dispatch a mechanic immediately.
+                  For urgent repairs, call our emergency line or book via WhatsApp and we'll dispatch a mechanic immediately.
                 </p>
-                <div className="font-bold text-xl text-quickfix-orange flex justify-center">+91 7337243180
-
-              </div>
+                <div className="font-bold text-xl text-quickfix-orange flex justify-center mb-4">+91 7337243180</div>
+                <a
+                  href="https://wa.me/917337243180?text=I%20need%20emergency%20vehicle%20service"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md font-semibold text-lg transition-colors"
+                >
+                  Book via WhatsApp
+                </a>
               </div>
             </div>
           </div>

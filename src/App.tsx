@@ -13,6 +13,7 @@ import ChatbotPage from "./pages/ChatbotPage";
 import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
 import ProfilePage from "./pages/ProfilePage";
+import AdminPage from "./pages/AdminPage";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/chat" element={<ChatbotPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/admin" element={<AdminPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

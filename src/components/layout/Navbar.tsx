@@ -10,6 +10,23 @@ const Navbar: React.FC = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  // Admin access code (simple client-side check for demo)
+  const [isAdmin, setIsAdmin] = useState(false);
+  React.useEffect(() => {
+    const code = localStorage.getItem('admin_code');
+    if (code === '1q2w3e4r5t@6y7u8i9o0p') setIsAdmin(true);
+  }, []);
+
+  const handleAdminLogin = () => {
+    const code = prompt('Enter admin access code:');
+    if (code === '1q2w3e4r5t@6y7u8i9o0p') {
+      localStorage.setItem('admin_code', code);
+      setIsAdmin(true);
+    } else {
+      alert('Invalid code');
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-sm">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
@@ -31,6 +48,24 @@ const Navbar: React.FC = () => {
           <NavLink to="/services">Services</NavLink>
           <NavLink to="/about">About Us</NavLink>
           <NavLink to="/booking">Book Now</NavLink>
+          <a
+            href="https://wa.me/917337243180?text=I%20need%20emergency%20vehicle%20service"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-2 px-3 py-2 text-base font-medium text-white bg-green-500 hover:bg-green-600 rounded-md transition-colors"
+          >
+            Book Emergency Service
+          </a>
+          {isAdmin ? (
+            <NavLink to="/admin">Admin</NavLink>
+          ) : (
+            <button
+              onClick={handleAdminLogin}
+              className="ml-2 px-3 py-2 text-base font-medium text-white bg-gray-700 hover:bg-gray-800 rounded-md transition-colors"
+            >
+              Admin
+            </button>
+          )}
         </nav>
 
         {/* Mobile Menu Button */}
@@ -58,6 +93,24 @@ const Navbar: React.FC = () => {
             <MobileNavLink to="/services" onClick={toggleMenu}>Services</MobileNavLink>
             <MobileNavLink to="/about" onClick={toggleMenu}>About Us</MobileNavLink>
             <MobileNavLink to="/booking" onClick={toggleMenu}>Book Now</MobileNavLink>
+            <a
+              href="https://wa.me/917337243180?text=I%20need%20emergency%20vehicle%20service"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block mt-2 px-3 py-2 text-base font-medium text-white bg-green-500 hover:bg-green-600 rounded-md text-center"
+            >
+              Book Emergency Service
+            </a>
+            {isAdmin ? (
+              <MobileNavLink to="/admin" onClick={toggleMenu}>Admin</MobileNavLink>
+            ) : (
+              <button
+                onClick={handleAdminLogin}
+                className="mt-2 px-3 py-2 text-base font-medium text-white bg-gray-700 hover:bg-gray-800 rounded-md text-center"
+              >
+                Admin
+              </button>
+            )}
             <div className="pt-3 border-t border-gray-200">
               <Button asChild className="w-full flex items-center justify-center" variant="outline" aria-label="Call Us">
                 <a href="tel:+917337243180">

@@ -60,6 +60,7 @@ const Footer: React.FC = () => {
           <p className="text-gray-400 text-sm mb-4 md:mb-0">
             &copy; {new Date().getFullYear()} QuickFix. All rights reserved.
           </p>
+          <span className="text-xs text-gray-500 mx-2 select-none">Made by Nithinvarma</span>
           <div className="flex space-x-4">
             <Link to="/" className="text-gray-400 text-sm hover:text-quickfix-orange">Privacy Policy</Link>
             <Link to="/" className="text-gray-400 text-sm hover:text-quickfix-orange">Terms of Service</Link>

@@ -1,15 +1,30 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { supabase } from '@/integrations/supabase/client';
 
 const ProfilePage: React.FC = () => {
   const { user, login, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const [orders, setOrders] = useState<any[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
 
   useEffect(() => {
     if (!user && !loading) {
       login();
+    }
+    if (user) {
+      setOrdersLoading(true);
+      supabase
+        .from('bookings')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('booking_date', { ascending: false })
+        .then(({ data, error }) => {
+          if (!error && data) setOrders(data);
+          setOrdersLoading(false);
+        });
     }
   }, [user, login, loading]);
 
@@ -29,12 +44,6 @@ const ProfilePage: React.FC = () => {
       </div>
     );
   }
-
-  // Example: orders could be fetched from a backend, here is a placeholder
-  const orders = [
-    { id: 1, service: "Oil Change", date: "2024-05-01", status: "Completed" },
-    { id: 2, service: "Brake Inspection", date: "2024-04-15", status: "Pending" },
-  ];
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-xl">
@@ -57,14 +66,16 @@ const ProfilePage: React.FC = () => {
       </div>
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-xl font-semibold mb-4">Your Orders</h2>
-        {orders.length === 0 ? (
+        {ordersLoading ? (
+          <div>Loading orders...</div>
+        ) : orders.length === 0 ? (
           <div>No orders found.</div>
         ) : (
           <ul className="space-y-2">
             {orders.map(order => (
               <li key={order.id} className="border-b pb-2">
-                <div className="font-medium">{order.service}</div>
-                <div className="text-sm text-gray-600">Date: {order.date}</div>
+                <div className="font-medium">{order.service_type}</div>
+                <div className="text-sm text-gray-600">Date: {order.booking_date?.split('T')[0]}</div>
                 <div className="text-sm text-gray-600">Status: {order.status}</div>
               </li>
             ))}
