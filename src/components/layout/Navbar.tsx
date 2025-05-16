@@ -48,20 +48,16 @@ const Navbar: React.FC = () => {
           <NavLink to="/services">Services</NavLink>
           <NavLink to="/about">About Us</NavLink>
           <NavLink to="/booking">Book Now</NavLink>
-          <a
-            href="https://wa.me/917337243180?text=I%20need%20emergency%20vehicle%20service"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-2 px-3 py-2 text-base font-medium text-white bg-green-500 hover:bg-green-600 rounded-md transition-colors"
-          >
+          <NavLink as="a" to={undefined} href="https://wa.me/917337243180?text=I%20need%20emergency%20vehicle%20service" target="_blank" rel="noopener noreferrer">
             Book Emergency Service
-          </a>
+          </NavLink>
           {isAdmin ? (
             <NavLink to="/admin">Admin</NavLink>
           ) : (
             <button
               onClick={handleAdminLogin}
-              className="ml-2 px-3 py-2 text-base font-medium text-white bg-gray-700 hover:bg-gray-800 rounded-md transition-colors"
+              className="px-3 py-2 text-base font-medium text-gray-700 hover:text-quickfix-blue hover:bg-quickfix-light-blue rounded-md transition-colors"
+              style={{ background: 'none', border: 'none' }}
             >
               Admin
             </button>
@@ -93,20 +89,16 @@ const Navbar: React.FC = () => {
             <MobileNavLink to="/services" onClick={toggleMenu}>Services</MobileNavLink>
             <MobileNavLink to="/about" onClick={toggleMenu}>About Us</MobileNavLink>
             <MobileNavLink to="/booking" onClick={toggleMenu}>Book Now</MobileNavLink>
-            <a
-              href="https://wa.me/917337243180?text=I%20need%20emergency%20vehicle%20service"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block mt-2 px-3 py-2 text-base font-medium text-white bg-green-500 hover:bg-green-600 rounded-md text-center"
-            >
+            <MobileNavLink as="a" to={undefined} href="https://wa.me/917337243180?text=I%20need%20emergency%20vehicle%20service" target="_blank" rel="noopener noreferrer">
               Book Emergency Service
-            </a>
+            </MobileNavLink>
             {isAdmin ? (
               <MobileNavLink to="/admin" onClick={toggleMenu}>Admin</MobileNavLink>
             ) : (
               <button
                 onClick={handleAdminLogin}
-                className="mt-2 px-3 py-2 text-base font-medium text-white bg-gray-700 hover:bg-gray-800 rounded-md text-center"
+                className="px-3 py-2 text-base font-medium text-gray-700 hover:text-quickfix-blue hover:bg-quickfix-light-blue rounded-md text-center transition-colors"
+                style={{ background: 'none', border: 'none' }}
               >
                 Admin
               </button>
@@ -129,13 +121,33 @@ interface NavLinkProps {
   to: string;
   children: React.ReactNode;
   className?: string;
+  as?: string;
+  href?: string;
+  target?: string;
+  rel?: string;
 }
 
 const NavLink: React.FC<NavLinkProps> = ({
   to,
   children,
-  className
+  className,
+  as,
+  href,
+  target,
+  rel
 }) => {
+  if (as === 'a') {
+    return (
+      <a
+        href={href}
+        target={target}
+        rel={rel}
+        className={cn("px-3 py-2 text-base font-medium text-gray-700 hover:text-quickfix-blue hover:bg-quickfix-light-blue rounded-md transition-colors", className)}
+      >
+        {children}
+      </a>
+    );
+  }
   return (
     <Link to={to} className={cn("px-3 py-2 text-base font-medium text-gray-700 hover:text-quickfix-blue hover:bg-quickfix-light-blue rounded-md transition-colors", className)}>
       {children}
@@ -150,8 +162,25 @@ interface MobileNavLinkProps extends NavLinkProps {
 const MobileNavLink: React.FC<MobileNavLinkProps> = ({
   to,
   children,
-  onClick
+  onClick,
+  as,
+  href,
+  target,
+  rel
 }) => {
+  if (as === 'a') {
+    return (
+      <a
+        href={href}
+        target={target}
+        rel={rel}
+        className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-quickfix-blue hover:bg-quickfix-light-blue rounded-md"
+        onClick={onClick}
+      >
+        {children}
+      </a>
+    );
+  }
   return (
     <Link to={to} className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-quickfix-blue hover:bg-quickfix-light-blue rounded-md" onClick={onClick}>
       {children}
