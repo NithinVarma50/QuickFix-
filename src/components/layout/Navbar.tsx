@@ -10,23 +10,6 @@ const Navbar: React.FC = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  // Admin access code (simple client-side check for demo)
-  const [isAdmin, setIsAdmin] = useState(false);
-  React.useEffect(() => {
-    const code = localStorage.getItem('admin_code');
-    if (code === '1q2w3e4r5t@6y7u8i9o0p') setIsAdmin(true);
-  }, []);
-
-  const handleAdminLogin = () => {
-    const code = prompt('Enter admin access code:');
-    if (code === '1q2w3e4r5t@6y7u8i9o0p') {
-      localStorage.setItem('admin_code', code);
-      setIsAdmin(true);
-    } else {
-      alert('Invalid code');
-    }
-  };
-
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-sm">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
@@ -51,17 +34,6 @@ const Navbar: React.FC = () => {
           <NavLink as="a" to={undefined} href="https://wa.me/917337243180?text=I%20need%20emergency%20vehicle%20service" target="_blank" rel="noopener noreferrer">
             Book Emergency Service
           </NavLink>
-          {isAdmin ? (
-            <NavLink to="/admin">Admin</NavLink>
-          ) : (
-            <button
-              onClick={handleAdminLogin}
-              className="px-3 py-2 text-base font-medium text-gray-700 hover:text-quickfix-blue hover:bg-quickfix-light-blue rounded-md transition-colors"
-              style={{ background: 'none', border: 'none' }}
-            >
-              Admin
-            </button>
-          )}
         </nav>
 
         {/* Mobile Menu Button */}
@@ -92,17 +64,6 @@ const Navbar: React.FC = () => {
             <MobileNavLink as="a" to={undefined} href="https://wa.me/917337243180?text=I%20need%20emergency%20vehicle%20service" target="_blank" rel="noopener noreferrer">
               Book Emergency Service
             </MobileNavLink>
-            {isAdmin ? (
-              <MobileNavLink to="/admin" onClick={toggleMenu}>Admin</MobileNavLink>
-            ) : (
-              <button
-                onClick={handleAdminLogin}
-                className="px-3 py-2 text-base font-medium text-gray-700 hover:text-quickfix-blue hover:bg-quickfix-light-blue rounded-md text-center transition-colors"
-                style={{ background: 'none', border: 'none' }}
-              >
-                Admin
-              </button>
-            )}
             <div className="pt-3 border-t border-gray-200">
               <Button asChild className="w-full flex items-center justify-center" variant="outline" aria-label="Call Us">
                 <a href="tel:+917337243180">
