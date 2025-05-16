@@ -49,8 +49,17 @@ serve(async (req) => {
     Be helpful, professional and concise. Avoid technical jargon when simple explanations will suffice.
     Remember, you're an automotive expert chatbot for QuickFix - a mobile vehicle repair service in Hyderabad.`;
 
+    // Debug logs
+    console.log("User query:", userQuery);
+    console.log("API Key present:", !!geminiApiKey);
+
+    // Verify API key is present
+    if (!geminiApiKey) {
+      throw new Error("GEMINI_API_KEY is not set in environment variables");
+    }
+
     // Construct the API request for Gemini
-    const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=' + geminiApiKey, {
+    const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-1.0-pro:generateContent?key=' + geminiApiKey, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -79,9 +88,14 @@ serve(async (req) => {
       }),
     });
 
+    // Debug response status
+    console.log("API Response status:", response.status);
+    
     const data = await response.json();
+    console.log("API Response:", JSON.stringify(data).substring(0, 200) + "...");
     
     if (!data.candidates || data.candidates.length === 0) {
+      console.error("No candidates in response:", JSON.stringify(data));
       throw new Error("No response generated from AI");
     }
     
