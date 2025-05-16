@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
@@ -117,6 +116,10 @@ const BookingForm: React.FC = () => {
         service_type: values.serviceType,
         booking_date: values.date.toISOString(),
         address: values.address,
+        area: values.area, // ensure area is saved
+        phone: values.phone, // ensure phone is saved
+        name: values.name, // ensure name is saved
+        email: values.email, // ensure email is saved
         description: values.description || null,
         status: 'pending'
       });

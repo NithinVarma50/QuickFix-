@@ -10,6 +10,25 @@ const ProfilePage: React.FC = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
 
+  // Add delete order functionality for user
+  const handleDeleteOrder = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this order?')) return;
+    const { error } = await supabase.from('bookings').delete().eq('id', id);
+    if (!error) {
+      setOrders(prev => prev.filter(order => order.id !== id)); // Optimistically remove from UI
+    } else {
+      // fallback: refetch
+      supabase
+        .from('bookings')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('booking_date', { ascending: false })
+        .then(({ data, error }) => {
+          if (!error && data) setOrders(data);
+        });
+    }
+  };
+
   useEffect(() => {
     if (!user && !loading) {
       login();
@@ -77,6 +96,12 @@ const ProfilePage: React.FC = () => {
                 <div className="font-medium">{order.service_type}</div>
                 <div className="text-sm text-gray-600">Date: {order.booking_date?.split('T')[0]}</div>
                 <div className="text-sm text-gray-600">Status: {order.status}</div>
+                <button
+                  className="text-red-500 hover:underline text-sm mt-1"
+                  onClick={() => handleDeleteOrder(order.id)}
+                >
+                  Delete
+                </button>
               </li>
             ))}
           </ul>

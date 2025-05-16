@@ -26,9 +26,13 @@ const AdminPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this order?')) return;
     setDeletingId(id);
-    await supabase.from('bookings').delete().eq('id', id);
+    const { error } = await supabase.from('bookings').delete().eq('id', id);
     setDeletingId(null);
-    fetchOrders();
+    if (!error) {
+      setOrders(prev => prev.filter(order => order.id !== id)); // Optimistically remove from UI
+    } else {
+      fetchOrders(); // fallback in case of error
+    }
   };
 
   return (
