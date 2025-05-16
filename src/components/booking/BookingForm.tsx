@@ -121,9 +121,12 @@ const BookingForm: React.FC = () => {
         description: values.description || null,
         status: 'pending'
       });
-      
       if (error) {
-        throw error;
+        toast.error("Booking failed", {
+          description: error.message || "There was an error processing your request. Please check your details and try again.",
+        });
+        setSubmitting(false);
+        return;
       }
       
       // Also update user profile if needed
