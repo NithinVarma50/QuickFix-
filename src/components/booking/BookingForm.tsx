@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
@@ -116,17 +117,12 @@ const BookingForm: React.FC = () => {
         service_type: values.serviceType,
         booking_date: values.date.toISOString(),
         address: values.address,
-        area: values.area,
-        phone: values.phone, // Add phone number to booking
         description: values.description || null,
         status: 'pending'
       });
+      
       if (error) {
-        toast.error("Booking failed", {
-          description: error.message || "There was an error processing your request. Please check your details and try again.",
-        });
-        setSubmitting(false);
-        return;
+        throw error;
       }
       
       // Also update user profile if needed
