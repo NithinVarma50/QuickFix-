@@ -1,6 +1,6 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 interface Props {
   children: ReactNode;
@@ -23,6 +23,7 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): State {
+    console.log("Error caught in ErrorBoundary:", error.message);
     return { hasError: true, error, errorInfo: null };
   }
 
@@ -35,6 +36,10 @@ class ErrorBoundary extends Component<Props, State> {
       console.error("NOT_FOUND error detected. Current path:", window.location.pathname);
     }
   }
+
+  handleReloadAtHome = () => {
+    window.location.href = '/';
+  };
 
   render() {
     if (this.state.hasError) {
@@ -51,7 +56,7 @@ class ErrorBoundary extends Component<Props, State> {
           <h1 className="text-2xl font-bold text-red-600 mb-4">Something went wrong</h1>
           <p className="mb-4">Please try refreshing the page or navigate back to home.</p>
           <button 
-            onClick={() => window.location.href = '/'} 
+            onClick={this.handleReloadAtHome} 
             className="px-4 py-2 bg-quickfix-blue text-white rounded hover:bg-quickfix-blue/90"
           >
             Go to Home

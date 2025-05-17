@@ -16,13 +16,20 @@ const NotFound: React.FC = () => {
       location.pathname
     );
     
-    // Report to an analytics service if needed
-    // This could be useful to track which routes users are trying to access
+    // Check if this is a direct page load/refresh
+    const isDirectNavigation = performance.navigation && 
+                               performance.navigation.type === 1;
+    
+    if (isDirectNavigation) {
+      console.log("This was a page refresh causing a 404");
+    }
   }, [location.pathname]);
 
   // If the URL includes specific error messages, redirect to home
-  if (location.pathname.includes('NOT_FOUND') || location.search.includes('NOT_FOUND')) {
-    console.log("Detected NOT_FOUND in URL, redirecting to home...");
+  if (location.pathname.includes('NOT_FOUND') || 
+      location.search.includes('NOT_FOUND') || 
+      document.referrer === '') {
+    console.log("Detected NOT_FOUND in URL or direct navigation, redirecting to home...");
     return <Navigate to="/" replace />;
   }
 
