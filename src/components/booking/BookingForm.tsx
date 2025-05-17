@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
@@ -108,21 +109,28 @@ const BookingForm: React.FC = () => {
     setSubmitting(true);
     
     try {
-      const { error } = await supabase.from('bookings').insert({
-        user_id: user.id,
-        vehicle_make: values.vehicleMake,
-        vehicle_model: values.vehicleModel,
-        vehicle_year: values.vehicleYear,
-        service_type: values.serviceType,
-        booking_date: values.date.toISOString(),
-        address: values.address,
-        area: values.area, // ensure area is saved
-        phone: values.phone, // ensure phone is saved
-        name: values.name, // ensure name is saved
-        email: values.email, // ensure email is saved
-        description: values.description || null,
-        status: 'pending'
-      });
+      // Convert string description to JSON array format as expected by the database
+      const descriptionValue = values.description 
+        ? [values.description] 
+        : null;
+      
+      const { error } = await supabase
+        .from('bookings')
+        .insert({
+          user_id: user.id,
+          vehicle_make: values.vehicleMake,
+          vehicle_model: values.vehicleModel,
+          vehicle_year: values.vehicleYear,
+          service_type: values.serviceType,
+          booking_date: values.date.toISOString(),
+          address: values.address,
+          area: values.area,
+          phone: values.phone,
+          name: values.name,
+          email: values.email,
+          description: descriptionValue,
+          status: 'pending'
+        });
       
       if (error) {
         throw error;
