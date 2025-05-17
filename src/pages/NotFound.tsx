@@ -1,6 +1,6 @@
 
 import React, { useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -8,13 +8,23 @@ import { AlertTriangle, ArrowLeft } from "lucide-react";
 
 const NotFound: React.FC = () => {
   const location = useLocation();
-
+  
   useEffect(() => {
+    // Log the error for debugging
     console.error(
       "404 Error: User attempted to access non-existent route:",
       location.pathname
     );
+    
+    // Report to an analytics service if needed
+    // This could be useful to track which routes users are trying to access
   }, [location.pathname]);
+
+  // If the URL includes specific error messages, redirect to home
+  if (location.pathname.includes('NOT_FOUND') || location.search.includes('NOT_FOUND')) {
+    console.log("Detected NOT_FOUND in URL, redirecting to home...");
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <div className="flex flex-col min-h-screen">

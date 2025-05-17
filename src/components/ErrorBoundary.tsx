@@ -9,27 +9,39 @@ interface Props {
 interface State {
   hasError: boolean;
   error: Error | null;
+  errorInfo: ErrorInfo | null;
 }
 
 class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { 
+      hasError: false, 
+      error: null,
+      errorInfo: null
+    };
   }
 
   static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
+    return { hasError: true, error, errorInfo: null };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("Error caught by ErrorBoundary:", error, errorInfo);
+    this.setState({ errorInfo });
+    
+    // Log more details about the error
+    if (error.message.includes('NOT_FOUND')) {
+      console.error("NOT_FOUND error detected. Current path:", window.location.pathname);
+    }
   }
 
   render() {
     if (this.state.hasError) {
-      // If the error is related to routing or 404
+      // For NOT_FOUND errors, immediately redirect to home
       if (this.state.error?.message?.includes('NOT_FOUND') || 
           this.state.error?.message?.includes('404')) {
+        console.log("Redirecting from 404 error to home page...");
         return <Navigate to="/" replace />;
       }
       
