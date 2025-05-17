@@ -12,10 +12,15 @@ export type Database = {
       bookings: {
         Row: {
           address: string
+          area: string | null
           booking_date: string
           created_at: string | null
-          description: string | null
+          description: Json[] | null
+          email: string | null
           id: string
+          name: string | null
+          phone: string | null
+          "phone number": number | null
           service_type: string
           status: string
           updated_at: string | null
@@ -26,10 +31,15 @@ export type Database = {
         }
         Insert: {
           address: string
+          area?: string | null
           booking_date: string
           created_at?: string | null
-          description?: string | null
+          description?: Json[] | null
+          email?: string | null
           id?: string
+          name?: string | null
+          phone?: string | null
+          "phone number"?: number | null
           service_type: string
           status?: string
           updated_at?: string | null
@@ -40,10 +50,15 @@ export type Database = {
         }
         Update: {
           address?: string
+          area?: string | null
           booking_date?: string
           created_at?: string | null
-          description?: string | null
+          description?: Json[] | null
+          email?: string | null
           id?: string
+          name?: string | null
+          phone?: string | null
+          "phone number"?: number | null
           service_type?: string
           status?: string
           updated_at?: string | null
@@ -84,24 +99,21 @@ export type Database = {
         }
         Relationships: []
       }
-      vehicle_problems: {
+      QuickFix: {
         Row: {
-          id: string;
-          problem: string;
-          solution: string;
-        };
+          created_at: string
+          id: number
+        }
         Insert: {
-          id?: string;
-          problem: string;
-          solution: string;
-        };
+          created_at?: string
+          id?: number
+        }
         Update: {
-          id?: string;
-          problem?: string;
-          solution?: string;
-        };
-        Relationships: [];
-      };
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -110,7 +122,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      "phone number": "10"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -225,6 +237,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      "phone number": ["10"],
+    },
   },
 } as const
