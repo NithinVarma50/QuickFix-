@@ -24,8 +24,13 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       staleTime: 5 * 60 * 1000, // 5 minutes
       gcTime: 10 * 60 * 1000,   // 10 minutes
-      useErrorBoundary: true,    // Allow React Query errors to be caught by ErrorBoundary
     },
+    mutations: {
+      onError: (error) => {
+        // This allows errors to propagate to the ErrorBoundary
+        console.error('Mutation error:', error);
+      }
+    }
   },
 });
 
