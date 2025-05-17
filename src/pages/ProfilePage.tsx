@@ -32,7 +32,8 @@ import {
   Trash2,
   Settings,
   CheckCircle,
-  XCircle
+  XCircle,
+  RefreshCw
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -41,11 +42,15 @@ const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState<any[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
   const { toast } = useToast();
 
-  // Add delete order functionality for user
+  // Add delete order functionality for user with proper loading state
   const handleDeleteOrder = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this order?')) return;
+    
+    setDeleteLoading(id); // Set loading for specific order
     
     try {
       const { error } = await supabase.from('bookings').delete().eq('id', id);
@@ -65,12 +70,22 @@ const ProfilePage: React.FC = () => {
         description: "There was a problem deleting your order. Please try again.",
         variant: "destructive"
       });
-      
-      // fallback: refetch orders
-      if (user) {
-        fetchOrders(user.id);
-      }
+    } finally {
+      setDeleteLoading(null);
     }
+  };
+
+  const refreshOrders = async () => {
+    if (!user) return;
+    
+    setRefreshing(true);
+    await fetchOrders(user.id);
+    setRefreshing(false);
+    
+    toast({
+      title: "Refreshed",
+      description: "Your order list has been updated",
+    });
   };
 
   const fetchOrders = async (userId: string) => {
@@ -105,6 +120,29 @@ const ProfilePage: React.FC = () => {
     }
     if (user) {
       fetchOrders(user.id);
+    }
+
+    // Setup real-time listener for booking changes
+    if (user) {
+      const channel = supabase
+        .channel('public:bookings')
+        .on('postgres_changes', 
+          { 
+            event: '*', 
+            schema: 'public', 
+            table: 'bookings',
+            filter: `user_id=eq.${user.id}`
+          }, 
+          (payload) => {
+            // Refresh the orders when any changes happen
+            fetchOrders(user.id);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
     }
   }, [user, login, loading]);
 
@@ -226,9 +264,21 @@ const ProfilePage: React.FC = () => {
 
         {/* Service History */}
         <Card className="col-span-1 md:col-span-2">
-          <CardHeader>
-            <CardTitle className="text-xl">Service History</CardTitle>
-            <CardDescription>Your recent appointments and bookings</CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-xl">Service History</CardTitle>
+              <CardDescription>Your recent appointments and bookings</CardDescription>
+            </div>
+            <Button 
+              size="sm" 
+              variant="outline" 
+              onClick={refreshOrders}
+              disabled={refreshing}
+              className="flex items-center gap-1"
+            >
+              <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
           </CardHeader>
           
           <CardContent>
@@ -278,10 +328,15 @@ const ProfilePage: React.FC = () => {
                           <Button
                             variant="ghost"
                             size="sm"
+                            disabled={deleteLoading === order.id}
                             className="h-8 text-red-500 hover:text-red-700 hover:bg-red-50"
                             onClick={() => handleDeleteOrder(order.id)}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            {deleteLoading === order.id ? (
+                              <div className="h-4 w-4 border-2 border-t-red-500 border-red-200 rounded-full animate-spin" />
+                            ) : (
+                              <Trash2 className="h-4 w-4" />
+                            )}
                             <span className="sr-only">Delete</span>
                           </Button>
                         </TableCell>
