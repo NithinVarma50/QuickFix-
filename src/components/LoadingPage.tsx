@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
+import { Van } from 'lucide-react';
 
 const LoadingPage: React.FC = () => {
   const [vanPosition, setVanPosition] = useState(-100); // Start off-screen to the left
@@ -42,9 +43,9 @@ const LoadingPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 bg-white flex flex-col items-center justify-center overflow-hidden">
+    <div className="fixed inset-0 bg-white dark:bg-gray-900 flex flex-col items-center justify-center overflow-hidden">
       {/* QuickFix Logo */}
-      <h1 className="text-6xl font-bold font-heading mb-16">QUICKFIX</h1>
+      <h1 className="text-6xl font-bold font-heading mb-16 text-quickfix-blue dark:text-white">QUICKFIX</h1>
       
       {/* Road with dashed lines */}
       <div className="w-full h-10 bg-gray-300 relative mb-8">
@@ -68,24 +69,50 @@ const LoadingPage: React.FC = () => {
             transition: 'left 0.1s linear'
           }}
         >
-          <div className="relative w-24 h-14">
-            {/* Van SVG */}
-            <svg width="96" height="56" viewBox="0 0 96 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="10" y="8" width="70" height="30" fill="#FFD333" />
-              <path d="M80 8H90L85 38H80V8Z" fill="#FFD333" />
-              <path d="M10 8H0L5 38H10V8Z" fill="#FFD333" />
-              <rect x="5" y="30" width="80" height="8" fill="#FFD333" />
-              <rect x="65" y="15" width="15" height="15" fill="#444444" />
-              <circle cx="20" cy="38" r="8" fill="#444444" />
-              <circle cx="20" cy="38" r="3" fill="#888888" />
-              <circle cx="70" cy="38" r="8" fill="#444444" />
-              <circle cx="70" cy="38" r="3" fill="#888888" />
-              <rect x="30" y="18" width="20" height="10" fill="#000000" />
-              <text x="33" y="26" fontSize="8" fill="black" fontWeight="bold">QuickFix</text>
+          {/* Custom QuickFix Van */}
+          <div className="relative w-36 h-20 animate-[van-bounce_0.5s_infinite]">
+            <svg width="144" height="80" viewBox="0 0 144 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Van body */}
+              <rect x="15" y="15" width="105" height="40" fill="#1A1F2C" rx="5" />
+              <rect x="15" y="35" width="105" height="20" fill="#1A1F2C" rx="2" />
+              
+              {/* Van front/hood */}
+              <path d="M120 15H130C132 15 135 17 135 20L130 55H120V15Z" fill="#1A1F2C" />
+              
+              {/* Windows */}
+              <rect x="30" y="20" width="30" height="15" fill="#9b87f5" rx="2" />
+              <rect x="70" y="20" width="30" height="15" fill="#9b87f5" rx="2" />
+              
+              {/* Details */}
+              <rect x="120" y="30" width="10" height="10" fill="#9b87f5" />
+              
+              {/* Wheels */}
+              <circle cx="40" cy="55" r="10" fill="#333333" />
+              <circle cx="40" cy="55" r="5" fill="#666666" />
+              <circle cx="100" cy="55" r="10" fill="#333333" />
+              <circle cx="100" cy="55" r="5" fill="#666666" />
+              
+              {/* Logo */}
+              <text x="50" y="47" fontSize="14" fontWeight="bold" fill="#ffffff">QuickFix</text>
+              
+              {/* Headlight */}
+              <rect x="130" y="30" width="5" height="5" fill="#FFFF00" />
+              
+              {/* Motion lines */}
+              <line x1="10" y1="45" x2="5" y2="45" stroke="#6E59A5" strokeWidth="2" />
+              <line x1="15" y1="40" x2="10" y2="40" stroke="#6E59A5" strokeWidth="2" />
+              <line x1="12" y1="50" x2="7" y2="50" stroke="#6E59A5" strokeWidth="2" />
             </svg>
             
-            {/* Motion effects */}
-            <div className="absolute -bottom-1 left-5 w-16 h-2 bg-black/10 rounded-full blur-sm animate-pulse"></div>
+            {/* Shadow effect */}
+            <div className="absolute -bottom-1 left-10 w-24 h-3 bg-black/20 rounded-full blur-sm"></div>
+            
+            {/* Dust effect */}
+            <div className="absolute bottom-0 left-0 flex">
+              <div className="w-2 h-2 bg-gray-200 rounded-full animate-pulse mx-1 opacity-70"></div>
+              <div className="w-1 h-1 bg-gray-200 rounded-full animate-pulse mx-1 opacity-50"></div>
+              <div className="w-2 h-2 bg-gray-200 rounded-full animate-pulse mx-1 opacity-60"></div>
+            </div>
           </div>
         </div>
       </div>
