@@ -1,6 +1,5 @@
 
 import React, { useEffect, useState } from 'react';
-import { Van } from 'lucide-react';
 
 const LoadingPage: React.FC = () => {
   const [vanPosition, setVanPosition] = useState(-100); // Start off-screen to the left
