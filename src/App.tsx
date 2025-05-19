@@ -1,5 +1,4 @@
 
-import { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import ErrorBoundary from "./components/ErrorBoundary";
-import LoadingPage from "./components/LoadingPage";
 
 import Index from "./pages/Index";
 import BookingPage from "./pages/BookingPage";
@@ -36,48 +34,31 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Simulate app initialization/loading time
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 3000); // Show loading screen for 3 seconds
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
-    return <LoadingPage />;
-  }
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ErrorBoundary>
-            <AuthProvider>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/booking" element={<BookingPage />} />
-                <Route path="/services" element={<ServicesPage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/chat" element={<ChatbotPage />} />
-                <Route path="/auth" element={<AuthPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/404" element={<NotFound />} />
-                {/* This route will catch all unmatched routes */}
-                <Route path="*" element={<Navigate to="/404" />} />
-              </Routes>
-            </AuthProvider>
-          </ErrorBoundary>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  );
-};
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <ErrorBoundary>
+          <AuthProvider>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/booking" element={<BookingPage />} />
+              <Route path="/services" element={<ServicesPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/chat" element={<ChatbotPage />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/404" element={<NotFound />} />
+              {/* This route will catch all unmatched routes */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AuthProvider>
+        </ErrorBoundary>
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;
