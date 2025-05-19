@@ -117,24 +117,6 @@ const AboutPage: React.FC = () => {
                   Leads strategic planning and operational efficiency across the company.
                 </p>
               </div>
-
-              {/* Vishal - Finance Head */}
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-xl font-semibold mb-2">Vishal</h3>
-                <h4 className="text-quickfix-orange font-medium mb-3">Finance Head</h4>
-                <p className="text-gray-600 mb-3">
-                  The numbers wizard keeping QuickFix financially sharp and sustainable.
-                </p>
-                <p className="text-gray-600 mb-3">
-                  Manages budgeting, spends, service costing, and financial planning to ensure we scale smart.
-                </p>
-                <p className="text-gray-600 mb-3">
-                  Brings precision to the chaos — handling cashflow, tracking revenue, and forecasting growth.
-                </p>
-                <p className="text-gray-600">
-                  Focused on building a financially sound model that powers our vans, tools, and ambitions.
-                </p>
-              </div>
             </div>
           </div>
         </section>
