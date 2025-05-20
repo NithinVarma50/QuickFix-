@@ -109,12 +109,15 @@ const AboutPage: React.FC = () => {
               
               <div className="bg-white p-6 rounded-lg shadow-md">
                 <h3 className="text-xl font-semibold mb-2">Nithin Varma</h3>
-                <h4 className="text-quickfix-orange font-medium mb-3">COO, Tech Lead & Strategy Builder</h4>
+                <h4 className="text-quickfix-orange font-medium mb-3">Co-Founder, COO & Tech Architect</h4>
                 <p className="text-gray-600 mb-3">
-                  Oversees product architecture and technical direction.
+                  Leads product innovation, strategic direction, and operational execution at QuickFix.
+                </p>
+                <p className="text-gray-600 mb-3">
+                  Redesigned and upgraded the original business model into a tech-powered, franchise-first ecosystem.
                 </p>
                 <p className="text-gray-600">
-                  Leads strategic planning and operational efficiency across the company.
+                  Drives AI integration, platform development, and long-term scaling through smart logistics and dark store infrastructure.
                 </p>
               </div>
             </div>
@@ -286,3 +289,4 @@ const AboutPage: React.FC = () => {
 };
 
 export default AboutPage;
+
