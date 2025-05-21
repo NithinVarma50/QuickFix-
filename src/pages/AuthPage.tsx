@@ -21,6 +21,8 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
+
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters")
@@ -43,6 +45,8 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 const AuthPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState("login");
   const { user, signIn, signUp } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -152,9 +156,14 @@ const AuthPage: React.FC = () => {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Password</FormLabel>
-                              <FormControl>
-                                <Input type="password" {...field} />
-                              </FormControl>
+                              <div className="relative">
+                                <FormControl>
+                                  <Input type={showPassword ? "text" : "password"} {...field} />
+                                </FormControl>
+                                <button type="button" className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5" onClick={() => setShowPassword(!showPassword)}>
+                                  {showPassword ? <EyeOffIcon className="h-5 w-5 text-gray-500" /> : <EyeIcon className="h-5 w-5 text-gray-500" />}
+                                </button>
+                              </div>
                               <FormMessage />
                             </FormItem>
                           )}
@@ -224,22 +233,33 @@ const AuthPage: React.FC = () => {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Password</FormLabel>
-                              <FormControl>
-                                <Input type="password" {...field} />
-                              </FormControl>
+                              <div className="relative">
+                                <FormControl>
+                                  <Input type={showPassword ? "text" : "password"} {...field} />
+                                </FormControl>
+                                <button type="button" className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5" onClick={() => setShowPassword(!showPassword)}>
+                                  {showPassword ? <EyeOffIcon className="h-5 w-5 text-gray-500" /> : <EyeIcon className="h-5 w-5 text-gray-500" />}
+                                </button>
+                              </div>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
+
                         <FormField
                           control={registerForm.control}
                           name="confirmPassword"
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Confirm Password</FormLabel>
-                              <FormControl>
-                                <Input type="password" {...field} />
-                              </FormControl>
+                              <div className="relative">
+                                <FormControl>
+                                  <Input type={showConfirmPassword ? "text" : "password"} {...field} />
+                                </FormControl>
+                                <button type="button" className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                  {showConfirmPassword ? <EyeOffIcon className="h-5 w-5 text-gray-500" /> : <EyeIcon className="h-5 w-5 text-gray-500" />}
+                                </button>
+                              </div>
                               <FormMessage />
                             </FormItem>
                           )}
