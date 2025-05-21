@@ -74,6 +74,94 @@
   }
 }
 
+/* Loading Animation Styles */
+.loading-progress {
+  animation: progress 2s linear infinite;
+}
+
+.loading-van {
+  width: 60px;
+  height: 30px;
+  transform: translateY(-50%);
+  animation: moveVan 2s linear infinite;
+}
+
+.van-body {
+  width: 100%;
+  height: 100%;
+  background-color: #FFD700;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.van-cabin {
+  position: absolute;
+  width: 40%;
+  height: 70%;
+  background-color: #FFD700;
+  right: -5%;
+  top: 0;
+  border-radius: 8px;
+}
+
+.van-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  font-size: 10px;
+  font-weight: bold;
+  color: #0056b3;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.van-wheels {
+  position: absolute;
+  width: 100%;
+  bottom: -4px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 8px;
+}
+
+.wheel {
+  width: 10px;
+  height: 10px;
+  background-color: #333;
+  border-radius: 50%;
+  animation: wheelRotate 1s linear infinite;
+}
+
+@keyframes progress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes moveVan {
+  0% {
+    transform: translate(-50%, -50%);
+    left: 0%;
+  }
+  100% {
+    transform: translate(-50%, -50%);
+    left: 100%;
+  }
+}
+
+@keyframes wheelRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 /* Custom Animations */
 @keyframes float {
   0%, 100% { transform: translateY(0); }
