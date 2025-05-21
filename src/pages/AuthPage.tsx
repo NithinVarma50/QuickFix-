@@ -48,11 +48,12 @@ type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 type LoginFormValues = z.infer<typeof loginSchema>;
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
-const AuthPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState("login");
-  const { user, signIn, signUp, resetPassword } = useAuth();
+const AuthPage: React.FC<object> = () => {
+  const [activeTab, setActiveTab] = useState("login"); // Ensure this line exists
+  const { user, signIn, signUp, resetPassword } = useAuth(); // Ensure this line exists
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
+  const [isSubmittingForgotPassword, setIsSubmittingForgotPassword] = useState(false);
 
   const navigate = useNavigate();
   
@@ -90,30 +91,33 @@ const AuthPage: React.FC = () => {
   
   const handleForgotPasswordClick = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    setActiveTab(\"forgotPassword\");
+    setActiveTab("forgotPassword");
   };
 
   async function onForgotPasswordSubmit(values: ForgotPasswordFormValues) {
     try {
+      setIsSubmittingForgotPassword(true);
       const { error } = await resetPassword(values.email);
       if (error) {
-        toast.error(\"Password reset failed\", {
-          description: error.message || \"Please try again later\",
-        });
+        toast.error("Password reset failed", {
+          description: error.message || "Please try again later"
+ });
       } else {
-        toast.success(\"Password reset email sent\", {
-          description: \"Please check your email for instructions to reset your password.\",
-        });
-        setActiveTab(\"login\"); // Optionally switch back to login tab
+        toast.success("Password reset email sent", {
+ description: "Please check your email for instructions to reset your password.",
+ }); 
+        setActiveTab("login"); // Optionally switch back to login tab
       }
     } catch (error) {
-      toast.error(\"An unexpected error occurred\", {
-        description: \"Please try again later\",
+      toast.error("An unexpected error occurred", {
+
+
+        description: "Please try again later"
       });
     }
   }
 
-  async function onLoginSubmit(values: LoginFormValues) {
+ async function onLoginSubmit(values: LoginFormValues) {
     try {
       const { error } = await signIn(values.email, values.password);
       if (error) {
@@ -211,11 +215,7 @@ const AuthPage: React.FC = () => {
                           Login
                         </Button>
                       </form>
-                      <div className=\"text-center mt-4\">\n+                        <a href=\"#\" className=\"text-sm text-quickfix-blue hover:underline\" onClick={handleForgotPasswordClick}>Forgot Password?</a>\n+                      </div>\n                     </Form>\n                   </CardContent>\n                 </Card>\n
-                    </Form>
-                  </CardContent>
-                </Card>
-              </TabsContent>
+ <div className="text-center mt-4"><a href="#" className="text-sm text-quickfix-blue hover:underline" onClick={handleForgotPasswordClick}>Forgot Password?</a></div></Form></CardContent></Card></TabsContent> 
               
               <TabsContent value="register">
                 <Card>
@@ -263,7 +263,7 @@ const AuthPage: React.FC = () => {
                               <FormControl>
                                 <Input placeholder="you@example.com" type="email" {...field} />
                               </FormControl>
-                              <FormMessage />
+ <FormMessage />
                             </FormItem>
                           )}
                         />
@@ -303,9 +303,41 @@ const AuthPage: React.FC = () => {
                               <FormMessage />
                             </FormItem>
                           )}
+ />
+                        <Button type="submit" className="w-full bg-quickfix-blue hover:bg-quickfix-blue/90" disabled={isSubmittingForgotPassword}>
+
+
+                          Register
+                        </Button>
+                      </form>
+                    </Form>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              <TabsContent value="forgotPassword">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Forgot Password</CardTitle>
+                    <CardDescription>Enter your email address to receive a password reset link.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Form {...forgotPasswordForm}>
+                      <form onSubmit={forgotPasswordForm.handleSubmit(onForgotPasswordSubmit)} className="space-y-6">
+                        <FormField
+                          control={forgotPasswordForm.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Email</FormLabel>
+                              <FormControl>
+                                <Input placeholder="you@example.com" type="email" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
                         />
                         <Button type="submit" className="w-full bg-quickfix-blue hover:bg-quickfix-blue/90">
-                          Register
+                          Send Reset Link
                         </Button>
                       </form>
                     </Form>
