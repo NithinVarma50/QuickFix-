@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -17,6 +17,7 @@ import {
   FormMessage 
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -39,14 +40,21 @@ const registerSchema = z.object({
   path: ["confirmPassword"]
 });
 
+const forgotPasswordSchema = z.object({
+ email: z.string().email("Please enter a valid email address"),
+});
+
+type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 type LoginFormValues = z.infer<typeof loginSchema>;
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 const AuthPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState("login");
-  const { user, signIn, signUp } = useAuth();
+  const { user, signIn, signUp, resetPassword } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSubmittingForgotPassword, setIsSubmittingForgotPassword] = useState(false);
+
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -71,6 +79,13 @@ const AuthPage: React.FC = () => {
       email: "",
       password: "",
       confirmPassword: ""
+    }
+  });
+
+  const forgotPasswordForm = useForm<ForgotPasswordFormValues>({
+    resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: {
+      email: ""
     }
   });
   
@@ -172,6 +187,7 @@ const AuthPage: React.FC = () => {
                           Login
                         </Button>
                       </form>
+                      <div className=\"text-center mt-4\">\n+                        <a href=\"#\" className=\"text-sm text-quickfix-blue hover:underline\" onClick={handleForgotPasswordClick}>Forgot Password?</a>\n+                      </div>\n                     </Form>\n                   </CardContent>\n                 </Card>\n
                     </Form>
                   </CardContent>
                 </Card>
