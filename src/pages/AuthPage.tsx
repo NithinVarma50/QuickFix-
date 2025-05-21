@@ -53,7 +53,6 @@ const AuthPage: React.FC = () => {
   const { user, signIn, signUp, resetPassword } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isSubmittingForgotPassword, setIsSubmittingForgotPassword] = useState(false);
 
   const navigate = useNavigate();
   
@@ -89,6 +88,31 @@ const AuthPage: React.FC = () => {
     }
   });
   
+  const handleForgotPasswordClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    setActiveTab(\"forgotPassword\");
+  };
+
+  async function onForgotPasswordSubmit(values: ForgotPasswordFormValues) {
+    try {
+      const { error } = await resetPassword(values.email);
+      if (error) {
+        toast.error(\"Password reset failed\", {
+          description: error.message || \"Please try again later\",
+        });
+      } else {
+        toast.success(\"Password reset email sent\", {
+          description: \"Please check your email for instructions to reset your password.\",
+        });
+        setActiveTab(\"login\"); // Optionally switch back to login tab
+      }
+    } catch (error) {
+      toast.error(\"An unexpected error occurred\", {
+        description: \"Please try again later\",
+      });
+    }
+  }
+
   async function onLoginSubmit(values: LoginFormValues) {
     try {
       const { error } = await signIn(values.email, values.password);
