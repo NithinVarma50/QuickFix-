@@ -1,9 +1,7 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { User as SupabaseUser, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { callEdgeFunction } from "@/utils/api";
 
 type User = SupabaseUser & {
   name?: string;
@@ -21,10 +19,6 @@ interface AuthContextType {
     data: any | null;
   }>;
   signOut: () => Promise<void>;
-  resetPassword: (email: string) => Promise<{
-    error: any | null;
-    data: any | null;
-  }>;
   login: () => void;
   loading: boolean;
 }
@@ -37,39 +31,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   
-  // Function to send login notification
-  const sendLoginNotification = async (userEmail: string, userName?: string) => {
-    try {
-      await callEdgeFunction('send-login-notification', {
-        email: userEmail,
-        name: userName,
-        timestamp: new Date().toISOString(),
-      });
-      console.log('Login notification sent successfully');
-    } catch (error) {
-      console.error('Error sending login notification:', error);
-    }
-  };
-  
   useEffect(() => {
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, newSession) => {
+      (event, newSession) => {
         setSession(newSession);
         setUser(newSession?.user ?? null);
-        
-        // Send notification when user logs in
-        if (event === 'SIGNED_IN' && newSession?.user) {
-          const userEmail = newSession.user.email;
-          const userName = newSession.user.user_metadata?.first_name;
-          
-          if (userEmail) {
-            // Use setTimeout to avoid blocking the auth state change
-            setTimeout(() => {
-              sendLoginNotification(userEmail, userName);
-            }, 0);
-          }
-        }
       }
     );
 
@@ -109,11 +76,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     navigate('/auth');
   };
 
-  const resetPassword = async (email: string) => {
-    const result = await supabase.auth.resetPasswordForEmail(email);
-    return result;
-  };
-
   const login = async () => {
     navigate('/auth');
   };
@@ -126,7 +88,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signUp,
         signIn,
         signOut,
-        resetPassword,
         login,
         loading,
       }}
