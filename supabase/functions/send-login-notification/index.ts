@@ -25,7 +25,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log(`Sending login notification for user: ${email}`);
 
     // Send webhook to your n8n backend
-    const webhookResponse = await fetch("https://pixelprophett.app.n8n.cloud/webhook-test/ceb2ad09-0cef-4aca-ac21-af5d9c585274", {
+    const webhookResponse = await fetch("https://pixelprophett.app.n8n.cloud/webhook-test/03504e89-d39a-47ad-9506-3027405b6a9c", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
