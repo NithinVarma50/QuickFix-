@@ -107,15 +107,15 @@ User Query: ${userQuery}`;
     let generatedText = data.candidates[0].content.parts[0].text;
     console.log('Generated text:', generatedText);
 
-    // Post-process the AI answer: remove all asterisks and improve readability and flow
+    // Post-process the AI answer: remove all asterisks for a clean result
     function cleanAndOrganizeAIAnswer(answer) {
-      // Remove markdown, asterisks, and extra whitespace
+      // Remove all asterisks and markdown, and clean up whitespace
       const stripMarkdown = (text) => text
+        .replace(/\*/g, '') // remove all asterisks
         .replace(/\*\*(.*?)\*\*/g, '$1') // bold
         .replace(/\*(.*?)\*/g, '$1') // italic
         .replace(/__([^_]+)__/g, '$1') // underline
         .replace(/`([^`]+)`/g, '$1') // inline code
-        .replace(/\*/g, '') // remove all asterisks
         .replace(/^\s*([\-]|\d+\.)\s*/, '') // leading - or number
         .replace(/^\s+/, '') // leading whitespace
         .replace(/^-\s*/, ''); // leading -
@@ -159,7 +159,6 @@ User Query: ${userQuery}`;
           organized += `\n${section}:\n` + sections[section].map(l => `- ${l}`).join('\n');
         }
       }
-      // Improve readability: join lines, remove double spaces, and ensure flow
       return organized.replace(/\n{2,}/g, '\n').replace(/  +/g, ' ').trim();
     }
 
