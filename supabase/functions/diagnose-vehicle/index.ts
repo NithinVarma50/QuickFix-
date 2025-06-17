@@ -1,21 +1,20 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
-const corsHeaders = {
+// Node.js version for Supabase Edge Functions
+export const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-serve(async (req) => {
+export default async (req, res) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return res.status(200).set(corsHeaders).send('');
   }
 
   try {
-    const { messages } = await req.json();
+    const { messages } = req.body;
     console.log('Received messages:', messages);
 
     // Last message is the user's query about vehicle issues
@@ -57,7 +56,7 @@ Remember: You're helping users in Hyderabad, so consider local conditions (traff
 
 User Query: ${userQuery}`;
 
-    // Use the correct Gemini model name - gemini-1.5-flash is the current available model
+    const geminiApiKey = process.env.GEMINI_API_KEY;
     const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + geminiApiKey, {
       method: 'POST',
       headers: {
@@ -103,23 +102,53 @@ User Query: ${userQuery}`;
     
     if (!data.candidates || data.candidates.length === 0) {
       console.error('No candidates in response:', data);
-      throw new Error("No response generated from AI");
+      return res.status(500).set(corsHeaders).json({ error: "No response generated from AI" });
     }
     
-    const generatedText = data.candidates[0].content.parts[0].text;
+    let generatedText = data.candidates[0].content.parts[0].text;
     console.log('Generated text:', generatedText);
 
-    return new Response(JSON.stringify({ 
+    // Post-process the AI answer: remove star marks and organize results
+    function cleanAndOrganizeAIAnswer(answer) {
+      // Remove leading * or - and extra spaces from each line
+      const lines = answer.split('\n').map(line => line.replace(/^\s*([*-]|\d+\.)\s*/, '').trim());
+      // Group lines by section headers
+      const sections = {
+        'Possible causes': [],
+        'Safe DIY checks': [],
+        'Safety warnings': [],
+        'Estimated repair cost': [],
+        'Urgency level': [],
+        'Other': []
+      };
+      let currentSection = 'Other';
+      for (const line of lines) {
+        if (/possible causes/i.test(line)) currentSection = 'Possible causes';
+        else if (/safe diy checks/i.test(line)) currentSection = 'Safe DIY checks';
+        else if (/safety warnings?/i.test(line)) currentSection = 'Safety warnings';
+        else if (/estimated repair cost/i.test(line)) currentSection = 'Estimated repair cost';
+        else if (/urgency level/i.test(line)) currentSection = 'Urgency level';
+        else if (/^\s*$/i.test(line)) continue;
+        else sections[currentSection].push(line);
+      }
+      // Build organized result as a string
+      let organized = '';
+      for (const [section, content] of Object.entries(sections)) {
+        if (content.length > 0) {
+          organized += `\n${section}:\n` + content.map(l => `- ${l}`).join('\n');
+        }
+      }
+      return organized.trim();
+    }
+
+    const organizedText = cleanAndOrganizeAIAnswer(generatedText);
+
+    return res.status(200).set(corsHeaders).json({
       role: "assistant",
-      content: generatedText 
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      content: organizedText
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error in diagnose-vehicle function:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return res.status(500).set(corsHeaders).json({ error: error.message });
   }
-});
+};
