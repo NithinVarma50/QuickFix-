@@ -107,20 +107,38 @@ User Query: ${userQuery}`;
     let generatedText = data.candidates[0].content.parts[0].text;
     console.log('Generated text:', generatedText);
 
-    // Post-process the AI answer: remove all asterisks for a clean result
+    // Post-process the AI answer: enforce formal, clear, and professional formatting
     function cleanAndOrganizeAIAnswer(answer) {
-      // Remove all asterisks and markdown, and clean up whitespace
-      const stripMarkdown = (text) => text
-        .replace(/\*/g, '') // remove all asterisks
+      // Remove markdown, asterisks, emojis, and informal language
+      const stripFormatting = (text) => text
         .replace(/\*\*(.*?)\*\*/g, '$1') // bold
         .replace(/\*(.*?)\*/g, '$1') // italic
         .replace(/__([^_]+)__/g, '$1') // underline
         .replace(/`([^`]+)`/g, '$1') // inline code
+        .replace(/\*/g, '') // remove all asterisks
+        .replace(/[\u{1F600}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '') // remove emojis
         .replace(/^\s*([\-]|\d+\.)\s*/, '') // leading - or number
         .replace(/^\s+/, '') // leading whitespace
         .replace(/^-\s*/, ''); // leading -
 
-      const lines = answer.split('\n').map(stripMarkdown).map(line => line.trim());
+      // Remove informal phrases and replace with formal alternatives
+      const formalize = (text) => text
+        .replace(/hi!|hey!|hello!|hi there!|hey there!/gi, 'Greetings.')
+        .replace(/let's|let us/gi, 'Let us')
+        .replace(/you'll|you will/gi, 'you will')
+        .replace(/i'm/gi, 'I am')
+        .replace(/it's/gi, 'it is')
+        .replace(/doesn't/gi, 'does not')
+        .replace(/can't/gi, 'cannot')
+        .replace(/won't/gi, 'will not')
+        .replace(/don't/gi, 'do not')
+        .replace(/I'm sorry/gi, 'We regret to inform you')
+        .replace(/book(ing)?/gi, 'schedule')
+        .replace(/get/gi, 'obtain')
+        .replace(/your/gi, 'the user\'s')
+        .replace(/you/gi, 'the user');
+
+      const lines = answer.split('\n').map(stripFormatting).map(formalize).map(line => line.trim());
       // Group lines by section headers
       const sections = {
         'Possible Causes': [],
@@ -142,7 +160,7 @@ User Query: ${userQuery}`;
         else if (/^\s*$/i.test(line)) continue;
         else sections[currentSection].push(line);
       }
-      // Build organized result as a string with headings and clear points
+      // Build organized result as a string with headings and full sentences
       let organized = '';
       if (sections['Summary'].length > 0) {
         organized += `Summary:\n${sections['Summary'].join(' ')}\n`;
@@ -156,9 +174,10 @@ User Query: ${userQuery}`;
       ];
       for (const section of order) {
         if (sections[section].length > 0) {
-          organized += `\n${section}:\n` + sections[section].map(l => `- ${l}`).join('\n');
+          organized += `\n${section}:\n` + sections[section].map(l => l).join('\n');
         }
       }
+      // Ensure proper paragraph spacing and remove extra newlines
       return organized.replace(/\n{2,}/g, '\n').replace(/  +/g, ' ').trim();
     }
 
