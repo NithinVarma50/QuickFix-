@@ -16,9 +16,11 @@ serve(async (req) => {
 
   try {
     const { messages } = await req.json();
+    console.log('Received messages:', messages);
 
     // Last message is the user's query about vehicle issues
     const userQuery = messages[messages.length - 1].content;
+    console.log('User query:', userQuery);
 
     // Enhanced system prompt to match the QuickFix AI personality
     const systemPrompt = `You are QuickFix AI, a friendly and experienced vehicle diagnostic assistant for QuickFix - a doorstep vehicle repair service in Hyderabad.
@@ -51,7 +53,9 @@ Common scenarios to handle:
 - Tire problems
 - Electrical issues
 
-Remember: You're helping users in Hyderabad, so consider local conditions (traffic, weather, road conditions).`;
+Remember: You're helping users in Hyderabad, so consider local conditions (traffic, weather, road conditions).
+
+User Query: ${userQuery}`;
 
     // Construct the API request for Gemini
     const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=' + geminiApiKey, {
@@ -64,14 +68,7 @@ Remember: You're helping users in Hyderabad, so consider local conditions (traff
           {
             parts: [
               { text: systemPrompt }
-            ],
-            role: "system"
-          },
-          {
-            parts: [
-              { text: userQuery }
-            ],
-            role: "user"
+            ]
           }
         ],
         generationConfig: {
@@ -102,12 +99,15 @@ Remember: You're helping users in Hyderabad, so consider local conditions (traff
     });
 
     const data = await response.json();
+    console.log('Gemini API response:', data);
     
     if (!data.candidates || data.candidates.length === 0) {
+      console.error('No candidates in response:', data);
       throw new Error("No response generated from AI");
     }
     
     const generatedText = data.candidates[0].content.parts[0].text;
+    console.log('Generated text:', generatedText);
 
     return new Response(JSON.stringify({ 
       role: "assistant",
@@ -115,7 +115,7 @@ Remember: You're helping users in Hyderabad, so consider local conditions (traff
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in diagnose-vehicle function:', error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
