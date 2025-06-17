@@ -115,10 +115,11 @@ User Query: ${userQuery}`;
         .replace(/\*(.*?)\*/g, '$1') // italic
         .replace(/__([^_]+)__/g, '$1') // underline
         .replace(/`([^`]+)`/g, '$1') // inline code
-        .replace(/^[\s*-]+/g, '') // leading * or -
+        .replace(/^\s*([*-]|\d+\.)\s*/, '') // leading * or - or number
+        .replace(/^[\s*-]+/, '') // leading * or -
         .replace(/^\d+\.\s*/, '') // leading numbers
         .replace(/^\s+/, '') // leading whitespace
-        .replace(/^\*\s*/, '') // leading *
+        .replace(/\*/g, '') // remove all remaining *
         .replace(/^-\s*/, ''); // leading -
 
       const lines = answer.split('\n').map(stripMarkdown).map(line => line.trim());
@@ -145,7 +146,7 @@ User Query: ${userQuery}`;
       let organized = '';
       for (const [section, content] of Object.entries(sections)) {
         if (content.length > 0) {
-          organized += `\n${section}:\n` + content.map(l => `- ${l}`).join('\n');
+          organized += `\n${section}:\n` + content.map(l => `• ${l}`).join('\n');
         }
       }
       return organized.trim();
