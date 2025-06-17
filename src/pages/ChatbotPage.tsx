@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Send } from "lucide-react";
+import { Send, Wrench } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,7 +29,7 @@ const ChatbotPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'system',
-      content: 'Welcome to QuickFix AI Assistant! Describe your vehicle issue, and I\'ll help diagnose the problem.',
+      content: 'Hi there! 👋 I\'m QuickFix AI, your friendly vehicle diagnostic assistant.\n\nDescribe your vehicle issue and I\'ll help you understand what might be wrong, suggest safe checks you can do, and let you know if you need professional help.\n\nWhether it\'s your car or bike, I\'m here to help! 🚗🏍️',
       timestamp: new Date(),
     }
   ]);
@@ -84,14 +84,14 @@ const ChatbotPage: React.FC = () => {
       }]);
     } catch (error: any) {
       console.error(error);
-      toast.error("Error communicating with AI assistant", {
+      toast.error("Error communicating with QuickFix AI", {
         description: error.message || "Please try again later",
       });
       
       // Add error message to chat
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: "I'm sorry, I encountered a problem processing your request. Please try again later.",
+        content: "I'm sorry, I encountered a problem processing your request. Please try again later, or feel free to book a mechanic directly! 🔧",
         timestamp: new Date(),
       }]);
     } finally {
@@ -110,9 +110,12 @@ const ChatbotPage: React.FC = () => {
       <main className="flex-grow">
         <div className="bg-quickfix-blue text-white py-12">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4 font-heading">AI Vehicle Diagnostics</h1>
+            <div className="flex items-center justify-center mb-4">
+              <Wrench className="h-8 w-8 mr-3" />
+              <h1 className="text-3xl md:text-4xl font-bold font-heading">QuickFix AI Assistant</h1>
+            </div>
             <p className="text-lg text-blue-100 max-w-2xl mx-auto">
-              Describe your vehicle issue to our AI assistant for a preliminary diagnosis before booking a service.
+              Your friendly vehicle diagnostic helper. Describe your issue and get instant guidance from our AI-powered assistant.
             </p>
           </div>
         </div>
@@ -134,7 +137,7 @@ const ChatbotPage: React.FC = () => {
                       ) : (
                         <>
                           <AvatarImage src="/lovable-uploads/7236feb8-e9ef-43d3-9100-9cdf7f9de7b0.png" />
-                          <AvatarFallback>AI</AvatarFallback>
+                          <AvatarFallback>🤖</AvatarFallback>
                         </>
                       )}
                     </Avatar>
@@ -144,8 +147,8 @@ const ChatbotPage: React.FC = () => {
                         message.role === 'user' 
                           ? 'bg-quickfix-blue text-white' 
                           : message.role === 'system' 
-                            ? 'bg-quickfix-light-blue text-gray-800 border border-gray-200' 
-                            : 'bg-gray-100 text-gray-800'
+                            ? 'bg-gradient-to-r from-quickfix-light-blue to-white text-gray-800 border border-quickfix-blue/20' 
+                            : 'bg-gray-50 text-gray-800 border border-gray-200'
                       }`}
                     >
                       <div className="whitespace-pre-wrap">{message.content}</div>
@@ -163,13 +166,14 @@ const ChatbotPage: React.FC = () => {
                   <div className="flex max-w-[80%] flex-row">
                     <Avatar className="h-8 w-8 mr-2">
                       <AvatarImage src="/lovable-uploads/7236feb8-e9ef-43d3-9100-9cdf7f9de7b0.png" />
-                      <AvatarFallback>AI</AvatarFallback>
+                      <AvatarFallback>🤖</AvatarFallback>
                     </Avatar>
-                    <div className="rounded-lg p-3 bg-gray-100 text-gray-800">
-                      <div className="flex space-x-2">
-                        <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                        <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                        <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    <div className="rounded-lg p-3 bg-gray-50 text-gray-800 border border-gray-200">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 rounded-full bg-quickfix-blue animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                        <div className="w-2 h-2 rounded-full bg-quickfix-blue animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                        <div className="w-2 h-2 rounded-full bg-quickfix-blue animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                        <span className="text-sm text-gray-600 ml-2">QuickFix AI is thinking...</span>
                       </div>
                     </div>
                   </div>
@@ -177,7 +181,7 @@ const ChatbotPage: React.FC = () => {
               )}
             </div>
             
-            <div className="p-4 border-t">
+            <div className="p-4 border-t bg-gray-50">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="flex space-x-2">
                   <FormField
@@ -187,9 +191,10 @@ const ChatbotPage: React.FC = () => {
                       <FormItem className="flex-grow">
                         <FormControl>
                           <Input 
-                            placeholder="Describe your vehicle issue..." 
+                            placeholder="Describe your vehicle issue... (e.g., 'My car won't start')" 
                             {...field} 
                             disabled={loading}
+                            className="border-quickfix-blue/30 focus:border-quickfix-blue"
                           />
                         </FormControl>
                       </FormItem>
@@ -203,18 +208,31 @@ const ChatbotPage: React.FC = () => {
             </div>
           </Card>
           
-          <div className="max-w-3xl mx-auto mt-8 bg-quickfix-light-blue rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4">How to Get the Best Diagnosis</h2>
-            <ul className="space-y-3 list-disc pl-5">
-              <li>Be specific about the symptoms (noises, vibrations, leaks, etc.)</li>
-              <li>Mention when the problem occurs (e.g., when starting, at high speeds)</li>
-              <li>Include your vehicle make, model, and year</li>
-              <li>Describe any warning lights or error codes</li>
-              <li>Mention any recent repairs or maintenance</li>
-            </ul>
+          <div className="max-w-3xl mx-auto mt-8 bg-gradient-to-r from-quickfix-light-blue to-white rounded-lg p-6 border border-quickfix-blue/20">
+            <h2 className="text-xl font-semibold mb-4 text-quickfix-dark">💡 Tips for Better Diagnosis</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <h3 className="font-medium mb-2 text-quickfix-blue">🔍 Be Specific About:</h3>
+                <ul className="space-y-1 text-sm text-gray-700">
+                  <li>• Strange noises (when they occur)</li>
+                  <li>• Warning lights on dashboard</li>
+                  <li>• When the problem happens</li>
+                  <li>• How long it's been happening</li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-medium mb-2 text-quickfix-blue">🚗 Include Vehicle Info:</h3>
+                <ul className="space-y-1 text-sm text-gray-700">
+                  <li>• Car or bike</li>
+                  <li>• Make and model</li>
+                  <li>• Approximate age</li>
+                  <li>• Recent maintenance</li>
+                </ul>
+              </div>
+            </div>
             <div className="mt-6 text-center">
               <Button asChild className="bg-quickfix-orange hover:bg-quickfix-orange/90">
-                <Link to="/booking">Book a Professional Mechanic</Link>
+                <Link to="/booking">🔧 Book a QuickFix Mechanic</Link>
               </Button>
             </div>
           </div>

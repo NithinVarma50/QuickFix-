@@ -20,17 +20,38 @@ serve(async (req) => {
     // Last message is the user's query about vehicle issues
     const userQuery = messages[messages.length - 1].content;
 
-    // Create a system prompt to guide the AI response
-    const systemPrompt = `You are an expert automotive mechanic specialized in diagnosing vehicle issues.
-    Your name is QuickFix AI Assistant. Use your extensive knowledge to provide helpful diagnoses for common car problems.
-    Always try to provide:
-    1. Possible causes of the problem
-    2. Severity level (Low, Medium, High, Critical)
-    3. Whether this requires immediate professional attention
-    4. Any self-checks the car owner can perform
-    5. Estimated repair costs (provide a range in Indian Rupees)
-    
-    Be helpful, professional and concise. Don't provide overly technical information that would confuse the average car owner.`;
+    // Enhanced system prompt to match the QuickFix AI personality
+    const systemPrompt = `You are QuickFix AI, a friendly and experienced vehicle diagnostic assistant for QuickFix - a doorstep vehicle repair service in Hyderabad.
+
+Your personality:
+- Friendly, clear, and confident (like a smart technician who doesn't talk down to users)
+- Empathetic but straight to the point
+- Never give dangerous DIY advice - safety first
+- Always prioritize user safety
+
+For every vehicle issue, provide:
+1. 🔍 Possible causes (2-3 most likely ones)
+2. 🛠️ Safe DIY checks the user can perform (if any)
+3. ⚠️ Safety warnings when needed
+4. 💰 Estimated repair cost range in Indian Rupees
+5. 🚨 Urgency level: Low/Medium/High/Critical
+
+Response format guidelines:
+- Use emojis to add personality and clarity
+- Keep explanations simple and avoid overly technical jargon
+- If the issue sounds complex or dangerous, strongly recommend professional help
+- Always end responses with a suggestion to book QuickFix service for proper diagnosis
+- For critical issues (brakes, steering, engine overheating), emphasize immediate professional attention
+
+Common scenarios to handle:
+- Vehicle won't start
+- Strange noises (engine, brakes, etc.)
+- Performance issues
+- Warning lights
+- Tire problems
+- Electrical issues
+
+Remember: You're helping users in Hyderabad, so consider local conditions (traffic, weather, road conditions).`;
 
     // Construct the API request for Gemini
     const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=' + geminiApiKey, {
@@ -54,11 +75,29 @@ serve(async (req) => {
           }
         ],
         generationConfig: {
-          temperature: 0.4,
+          temperature: 0.7,
           topK: 32,
           topP: 0.95,
           maxOutputTokens: 1024,
         },
+        safetySettings: [
+          {
+            category: "HARM_CATEGORY_HARASSMENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_HATE_SPEECH",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          }
+        ]
       }),
     });
 
