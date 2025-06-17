@@ -107,7 +107,7 @@ User Query: ${userQuery}`;
     let generatedText = data.candidates[0].content.parts[0].text;
     console.log('Generated text:', generatedText);
 
-    // Post-process the AI answer: organize, summarize, and format for clarity and brevity
+    // Post-process the AI answer: remove all asterisks and improve readability and flow
     function cleanAndOrganizeAIAnswer(answer) {
       // Remove markdown, asterisks, and extra whitespace
       const stripMarkdown = (text) => text
@@ -115,11 +115,9 @@ User Query: ${userQuery}`;
         .replace(/\*(.*?)\*/g, '$1') // italic
         .replace(/__([^_]+)__/g, '$1') // underline
         .replace(/`([^`]+)`/g, '$1') // inline code
-        .replace(/^\s*([*-]|\d+\.)\s*/, '') // leading * or - or number
-        .replace(/^[\s*-]+/, '') // leading * or -
-        .replace(/^\d+\.\s*/, '') // leading numbers
+        .replace(/\*/g, '') // remove all asterisks
+        .replace(/^\s*([\-]|\d+\.)\s*/, '') // leading - or number
         .replace(/^\s+/, '') // leading whitespace
-        .replace(/\*/g, '') // remove all remaining *
         .replace(/^-\s*/, ''); // leading -
 
       const lines = answer.split('\n').map(stripMarkdown).map(line => line.trim());
@@ -144,9 +142,8 @@ User Query: ${userQuery}`;
         else if (/^\s*$/i.test(line)) continue;
         else sections[currentSection].push(line);
       }
-      // Build organized result as a string with headings and bullet points
+      // Build organized result as a string with headings and clear points
       let organized = '';
-      // Optional: Add a summary if present
       if (sections['Summary'].length > 0) {
         organized += `Summary:\n${sections['Summary'].join(' ')}\n`;
       }
@@ -159,10 +156,11 @@ User Query: ${userQuery}`;
       ];
       for (const section of order) {
         if (sections[section].length > 0) {
-          organized += `\n${section}:\n` + sections[section].map(l => `• ${l}`).join('\n');
+          organized += `\n${section}:\n` + sections[section].map(l => `- ${l}`).join('\n');
         }
       }
-      return organized.trim();
+      // Improve readability: join lines, remove double spaces, and ensure flow
+      return organized.replace(/\n{2,}/g, '\n').replace(/  +/g, ' ').trim();
     }
 
     const organizedAnswer = cleanAndOrganizeAIAnswer(generatedText);
