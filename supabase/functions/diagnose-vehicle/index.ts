@@ -1,5 +1,4 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 // Node.js version for Supabase Edge Functions
 export const corsHeaders = {
@@ -108,10 +107,21 @@ User Query: ${userQuery}`;
     let generatedText = data.candidates[0].content.parts[0].text;
     console.log('Generated text:', generatedText);
 
-    // Post-process the AI answer: remove star marks and organize results
+    // Post-process the AI answer: remove star marks, markdown, and organize results
     function cleanAndOrganizeAIAnswer(answer) {
-      // Remove leading * or - and extra spaces from each line
-      const lines = answer.split('\n').map(line => line.replace(/^\s*([*-]|\d+\.)\s*/, '').trim());
+      // Remove markdown bold/italic and leading * or - or numbers
+      const stripMarkdown = (text) => text
+        .replace(/\*\*(.*?)\*\*/g, '$1') // bold
+        .replace(/\*(.*?)\*/g, '$1') // italic
+        .replace(/__([^_]+)__/g, '$1') // underline
+        .replace(/`([^`]+)`/g, '$1') // inline code
+        .replace(/^[\s*-]+/g, '') // leading * or -
+        .replace(/^\d+\.\s*/, '') // leading numbers
+        .replace(/^\s+/, '') // leading whitespace
+        .replace(/^\*\s*/, '') // leading *
+        .replace(/^-\s*/, ''); // leading -
+
+      const lines = answer.split('\n').map(stripMarkdown).map(line => line.trim());
       // Group lines by section headers
       const sections = {
         'Possible causes': [],
