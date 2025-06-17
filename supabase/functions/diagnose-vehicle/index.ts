@@ -57,8 +57,8 @@ Remember: You're helping users in Hyderabad, so consider local conditions (traff
 
 User Query: ${userQuery}`;
 
-    // Construct the API request for Gemini
-    const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=' + geminiApiKey, {
+    // Use the correct Gemini model name - gemini-1.5-flash is the current available model
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + geminiApiKey, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
