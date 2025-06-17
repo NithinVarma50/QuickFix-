@@ -107,7 +107,7 @@ User Query: ${userQuery}`;
     let generatedText = data.candidates[0].content.parts[0].text;
     console.log('Generated text:', generatedText);
 
-    // Post-process the AI answer: enforce formal, clear, and professional formatting
+    // Post-process the AI answer: concise, clear, formal, no symbols, no location or region unless asked
     function cleanAndOrganizeAIAnswer(answer) {
       // Remove markdown, asterisks, emojis, and informal language
       const stripFormatting = (text) => text
@@ -121,9 +121,9 @@ User Query: ${userQuery}`;
         .replace(/^\s+/, '') // leading whitespace
         .replace(/^-\s*/, ''); // leading -
 
-      // Remove informal phrases and replace with formal alternatives
+      // Remove informal and region-specific language
       const formalize = (text) => text
-        .replace(/hi!|hey!|hello!|hi there!|hey there!/gi, 'Greetings.')
+        .replace(/hi!|hey!|hello!|hi there!|hey there!/gi, '')
         .replace(/let's|let us/gi, 'Let us')
         .replace(/you'll|you will/gi, 'you will')
         .replace(/i'm/gi, 'I am')
@@ -136,7 +136,9 @@ User Query: ${userQuery}`;
         .replace(/book(ing)?/gi, 'schedule')
         .replace(/get/gi, 'obtain')
         .replace(/your/gi, 'the user\'s')
-        .replace(/you/gi, 'the user');
+        .replace(/you/gi, 'the user')
+        .replace(/Hyderabad|India|Indian/gi, '') // remove region unless asked
+        .replace(/\s{2,}/g, ' ');
 
       const lines = answer.split('\n').map(stripFormatting).map(formalize).map(line => line.trim());
       // Group lines by section headers
@@ -177,7 +179,7 @@ User Query: ${userQuery}`;
           organized += `\n${section}:\n` + sections[section].map(l => l).join('\n');
         }
       }
-      // Ensure proper paragraph spacing and remove extra newlines
+      // Remove extra newlines and keep it concise
       return organized.replace(/\n{2,}/g, '\n').replace(/  +/g, ' ').trim();
     }
 
