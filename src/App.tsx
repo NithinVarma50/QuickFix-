@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import ErrorBoundary from "./components/ErrorBoundary";
+import FloatingChatbot from "./components/FloatingChatbot";
 
 import Index from "./pages/Index";
 import BookingPage from "./pages/BookingPage";
@@ -54,6 +55,7 @@ const App = () => (
               {/* This route will catch all unmatched routes */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <FloatingChatbot />
           </AuthProvider>
         </ErrorBoundary>
       </BrowserRouter>
