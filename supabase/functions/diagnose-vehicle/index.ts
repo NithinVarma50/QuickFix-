@@ -107,9 +107,9 @@ User Query: ${userQuery}`;
     let generatedText = data.candidates[0].content.parts[0].text;
     console.log('Generated text:', generatedText);
 
-    // Post-process the AI answer: remove star marks, markdown, and organize results
+    // Post-process the AI answer: organize, summarize, and format for clarity and brevity
     function cleanAndOrganizeAIAnswer(answer) {
-      // Remove markdown bold/italic and leading * or - or numbers
+      // Remove markdown, asterisks, and extra whitespace
       const stripMarkdown = (text) => text
         .replace(/\*\*(.*?)\*\*/g, '$1') // bold
         .replace(/\*(.*?)\*/g, '$1') // italic
@@ -125,41 +125,52 @@ User Query: ${userQuery}`;
       const lines = answer.split('\n').map(stripMarkdown).map(line => line.trim());
       // Group lines by section headers
       const sections = {
-        'Possible causes': [],
-        'Safe DIY checks': [],
-        'Safety warnings': [],
-        'Estimated repair cost': [],
-        'Urgency level': [],
+        'Possible Causes': [],
+        'Safe DIY Checks': [],
+        'Safety Warnings': [],
+        'Estimated Repair Cost': [],
+        'Urgency Level': [],
+        'Summary': [],
         'Other': []
       };
       let currentSection = 'Other';
       for (const line of lines) {
-        if (/possible causes/i.test(line)) currentSection = 'Possible causes';
-        else if (/safe diy checks/i.test(line)) currentSection = 'Safe DIY checks';
-        else if (/safety warnings?/i.test(line)) currentSection = 'Safety warnings';
-        else if (/estimated repair cost/i.test(line)) currentSection = 'Estimated repair cost';
-        else if (/urgency level/i.test(line)) currentSection = 'Urgency level';
+        if (/possible causes/i.test(line)) currentSection = 'Possible Causes';
+        else if (/safe diy checks/i.test(line)) currentSection = 'Safe DIY Checks';
+        else if (/safety warnings?/i.test(line)) currentSection = 'Safety Warnings';
+        else if (/estimated repair cost/i.test(line)) currentSection = 'Estimated Repair Cost';
+        else if (/urgency level/i.test(line)) currentSection = 'Urgency Level';
+        else if (/summary/i.test(line)) currentSection = 'Summary';
         else if (/^\s*$/i.test(line)) continue;
         else sections[currentSection].push(line);
       }
-      // Build organized result as a string
+      // Build organized result as a string with headings and bullet points
       let organized = '';
-      for (const [section, content] of Object.entries(sections)) {
-        if (content.length > 0) {
-          organized += `\n${section}:\n` + content.map(l => `• ${l}`).join('\n');
+      // Optional: Add a summary if present
+      if (sections['Summary'].length > 0) {
+        organized += `Summary:\n${sections['Summary'].join(' ')}\n`;
+      }
+      const order = [
+        'Possible Causes',
+        'Safe DIY Checks',
+        'Safety Warnings',
+        'Estimated Repair Cost',
+        'Urgency Level',
+      ];
+      for (const section of order) {
+        if (sections[section].length > 0) {
+          organized += `\n${section}:\n` + sections[section].map(l => `• ${l}`).join('\n');
         }
       }
       return organized.trim();
     }
 
-    const organizedText = cleanAndOrganizeAIAnswer(generatedText);
+    const organizedAnswer = cleanAndOrganizeAIAnswer(generatedText);
+    console.log('Organized AI answer:', organizedAnswer);
 
-    return res.status(200).set(corsHeaders).json({
-      role: "assistant",
-      content: organizedText
-    });
+    return res.status(200).set(corsHeaders).json({ answer: organizedAnswer });
   } catch (error) {
-    console.error('Error in diagnose-vehicle function:', error);
-    return res.status(500).set(corsHeaders).json({ error: error.message });
+    console.error('Error processing request:', error);
+    return res.status(500).set(corsHeaders).json({ error: "Internal server error" });
   }
 };
