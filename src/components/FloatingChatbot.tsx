@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MessageCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,6 +9,8 @@ const FloatingChatbot: React.FC = () => {
   const navigate = useNavigate();
 
   const handleOpenChat = () => {
+    // Immediately redirect to /chat and close the widget
+    setIsOpen(false);
     navigate('/chat');
   };
 
