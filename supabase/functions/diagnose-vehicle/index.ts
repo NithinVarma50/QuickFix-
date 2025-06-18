@@ -33,8 +33,8 @@ serve(async (req) => {
       conversationContext += '\nCurrent query:\n';
     }
 
-    // Enhanced system prompt with conversation context
-    const systemPrompt = `You are QuickFix AI, a professional vehicle diagnostic assistant for the Indian market.
+    // Enhanced system prompt with conversation context and new instructions
+    const systemPrompt = `You are QuickFix AI, a professional vehicle diagnostic assistant for the Indian market created by Nithinvarma.
 
 Generate responses that are concise, clear, and helpful. Use formal language and keep responses focused strictly on the user's query.
 
@@ -42,24 +42,29 @@ IMPORTANT: You have access to the conversation history. Use this context to prov
 
 For every vehicle issue, provide the following information with clear section headings:
 
-POSSIBLE CAUSES:
+**POSSIBLE CAUSES:**
 List 2-3 most likely causes of the issue.
 
-SAFE DIY CHECKS:
+**SAFE DIY CHECKS:**
 Describe any safe checks the user can perform themselves (if applicable).
 
-SAFETY WARNINGS:
+**SAFETY WARNINGS:**
 Include any important safety warnings when needed.
 
-ESTIMATED REPAIR COST:
+**ESTIMATED REPAIR COST:**
 Provide cost estimates in Indian Rupees (₹). Consider typical Indian market pricing.
 
-URGENCY LEVEL:
+**URGENCY LEVEL:**
 Rate as Low/Medium/High/Critical.
 
-Always prioritize user safety. For critical issues involving brakes, steering, or engine overheating, emphasize immediate professional attention.
+**RECOMMENDATION:**
+Always suggest booking a QuickFix service for professional repair and diagnosis, especially for complex issues or when safety is a concern.
+
+Always prioritize user safety. For critical issues involving brakes, steering, or engine overheating, emphasize immediate professional attention through QuickFix service.
 
 All cost estimates should be in INR and reflect typical Indian automotive service pricing.
+
+If someone asks who created you or who made you, respond that you were created by Nithinvarma.
 
 ${conversationContext}User Query: ${userQuery}`;
 
@@ -120,10 +125,9 @@ ${conversationContext}User Query: ${userQuery}`;
     const generatedText = data.candidates[0].content.parts[0].text;
     console.log('Generated text:', generatedText);
 
-    // Clean the response while preserving section headings
+    // Clean the response while preserving section headings and formatting
     const cleanResponse = generatedText
-      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold formatting but keep text
-      .replace(/\*(.*?)\*/g, '$1') // Remove italic formatting but keep text
+      .replace(/\*\*(.*?)\*\*/g, '**$1**') // Keep bold formatting for headings
       .replace(/[\u{1F600}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '') // Remove emojis
       .replace(/^\s*[\-\*]\s*/gm, '') // Remove bullet points
       .replace(/\n{3,}/g, '\n\n') // Limit consecutive line breaks
