@@ -21,19 +21,31 @@ serve(async (req) => {
     const userQuery = messages[messages.length - 1].content;
     console.log('User query:', userQuery);
 
-    // System prompt for vehicle diagnosis
-    const systemPrompt = `You are QuickFix AI, a professional vehicle diagnostic assistant.
+    // System prompt for vehicle diagnosis with INR pricing and formatted headings
+    const systemPrompt = `You are QuickFix AI, a professional vehicle diagnostic assistant for the Indian market.
 
-Generate responses that are concise, clear, and helpful. Avoid unnecessary location references unless explicitly asked. Do not use informal symbols such as markdown, asterisks, or emojis. Exclude region-specific examples unless prompted. Use formal language. Keep responses short, direct, and focused strictly on the user's query.
+Generate responses that are concise, clear, and helpful. Use formal language and keep responses focused strictly on the user's query.
 
-For every vehicle issue, provide:
-1. Possible causes (2-3 most likely ones)
-2. Safe DIY checks the user can perform (if any)
-3. Safety warnings when needed
-4. Estimated repair cost range
-5. Urgency level: Low/Medium/High/Critical
+For every vehicle issue, provide the following information with clear section headings:
+
+POSSIBLE CAUSES:
+List 2-3 most likely causes of the issue.
+
+SAFE DIY CHECKS:
+Describe any safe checks the user can perform themselves (if applicable).
+
+SAFETY WARNINGS:
+Include any important safety warnings when needed.
+
+ESTIMATED REPAIR COST:
+Provide cost estimates in Indian Rupees (₹). Consider typical Indian market pricing.
+
+URGENCY LEVEL:
+Rate as Low/Medium/High/Critical.
 
 Always prioritize user safety. For critical issues involving brakes, steering, or engine overheating, emphasize immediate professional attention.
+
+All cost estimates should be in INR and reflect typical Indian automotive service pricing.
 
 User Query: ${userQuery}`;
 
@@ -94,10 +106,10 @@ User Query: ${userQuery}`;
     const generatedText = data.candidates[0].content.parts[0].text;
     console.log('Generated text:', generatedText);
 
-    // Clean the response to remove any unwanted formatting
+    // Clean the response while preserving section headings
     const cleanResponse = generatedText
-      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold formatting
-      .replace(/\*(.*?)\*/g, '$1') // Remove italic formatting
+      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold formatting but keep text
+      .replace(/\*(.*?)\*/g, '$1') // Remove italic formatting but keep text
       .replace(/[\u{1F600}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '') // Remove emojis
       .replace(/^\s*[\-\*]\s*/gm, '') // Remove bullet points
       .replace(/\n{3,}/g, '\n\n') // Limit consecutive line breaks
