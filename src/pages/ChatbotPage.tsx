@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,6 +42,39 @@ const ChatbotPage: React.FC = () => {
     },
   });
 
+  // Load conversation history from localStorage on component mount
+  useEffect(() => {
+    const savedMessages = localStorage.getItem('quickfix-chat-history');
+    if (savedMessages) {
+      try {
+        const parsedMessages = JSON.parse(savedMessages).map((msg: any) => ({
+          ...msg,
+          timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date()
+        }));
+        // Keep only the last 10 conversation exchanges (20 messages max: 10 user + 10 AI)
+        const recentMessages = parsedMessages.slice(-20);
+        setMessages(prev => {
+          // Keep the system message and add recent history
+          const systemMessage = prev[0];
+          return [systemMessage, ...recentMessages];
+        });
+      } catch (error) {
+        console.error('Error loading chat history:', error);
+      }
+    }
+  }, []);
+
+  // Save conversation history to localStorage whenever messages change
+  useEffect(() => {
+    // Only save non-system messages
+    const messagesToSave = messages.filter(msg => msg.role !== 'system');
+    if (messagesToSave.length > 0) {
+      // Keep only the last 20 messages (10 conversations)
+      const recentMessages = messagesToSave.slice(-20);
+      localStorage.setItem('quickfix-chat-history', JSON.stringify(recentMessages));
+    }
+  }, [messages]);
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -65,10 +97,16 @@ const ChatbotPage: React.FC = () => {
     setLoading(true);
     
     try {
-      // Call the edge function
+      // Get conversation history (excluding system message, last 10 exchanges)
+      const conversationHistory = messages
+        .filter(m => m.role !== 'system')
+        .slice(-20) // Last 20 messages (10 user + 10 AI responses)
+        .concat([userMessage]);
+      
+      // Call the edge function with conversation history
       const { data, error } = await supabase.functions.invoke('diagnose-vehicle', {
         body: {
-          messages: [...messages.filter(m => m.role !== 'system'), userMessage]
+          messages: conversationHistory
         }
       });
       
@@ -104,6 +142,17 @@ const ChatbotPage: React.FC = () => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  // Clear conversation history
+  const clearHistory = () => {
+    localStorage.removeItem('quickfix-chat-history');
+    setMessages([{
+      role: 'system',
+      content: 'Hi there! 👋 I\'m QuickFix AI, your friendly vehicle diagnostic assistant.\n\nDescribe your vehicle issue and I\'ll help you understand what might be wrong, suggest safe checks you can do, and let you know if you need professional help.\n\nWhether it\'s your car or bike, I\'m here to help! 🚗🏍️',
+      timestamp: new Date(),
+    }]);
+    toast.success("Chat history cleared!");
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -122,6 +171,21 @@ const ChatbotPage: React.FC = () => {
         
         <div className="container mx-auto px-4 py-8">
           <Card className="max-w-3xl mx-auto h-[600px] flex flex-col">
+            <div className="flex justify-between items-center p-4 border-b bg-gray-50">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                <span className="text-sm text-gray-600">AI remembers your last 10 conversations</span>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={clearHistory}
+                className="text-xs"
+              >
+                Clear History
+              </Button>
+            </div>
+            
             <div className="flex-grow overflow-y-auto p-4 space-y-4">
               {messages.map((message, index) => (
                 <div 

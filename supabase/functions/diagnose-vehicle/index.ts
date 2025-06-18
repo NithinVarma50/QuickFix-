@@ -17,14 +17,28 @@ serve(async (req) => {
     const { messages } = await req.json();
     console.log('Received messages:', messages);
 
-    // Last message is the user's query about vehicle issues
+    // Last message is the user's current query
     const userQuery = messages[messages.length - 1].content;
-    console.log('User query:', userQuery);
+    console.log('Current user query:', userQuery);
 
-    // System prompt for vehicle diagnosis with INR pricing and formatted headings
+    // Build conversation context from previous messages
+    let conversationContext = '';
+    if (messages.length > 1) {
+      const previousMessages = messages.slice(0, -1);
+      conversationContext = '\n\nPrevious conversation context:\n';
+      previousMessages.forEach((msg: any, index: number) => {
+        const role = msg.role === 'user' ? 'User' : 'Assistant';
+        conversationContext += `${role}: ${msg.content}\n`;
+      });
+      conversationContext += '\nCurrent query:\n';
+    }
+
+    // Enhanced system prompt with conversation context
     const systemPrompt = `You are QuickFix AI, a professional vehicle diagnostic assistant for the Indian market.
 
 Generate responses that are concise, clear, and helpful. Use formal language and keep responses focused strictly on the user's query.
+
+IMPORTANT: You have access to the conversation history. Use this context to provide more personalized and relevant responses. If the user is following up on a previous issue, acknowledge it and build upon previous recommendations.
 
 For every vehicle issue, provide the following information with clear section headings:
 
@@ -47,7 +61,7 @@ Always prioritize user safety. For critical issues involving brakes, steering, o
 
 All cost estimates should be in INR and reflect typical Indian automotive service pricing.
 
-User Query: ${userQuery}`;
+${conversationContext}User Query: ${userQuery}`;
 
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
     
