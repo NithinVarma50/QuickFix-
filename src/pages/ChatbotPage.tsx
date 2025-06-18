@@ -34,6 +34,7 @@ const ChatbotPage: React.FC = () => {
   ]);
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -75,8 +76,18 @@ const ChatbotPage: React.FC = () => {
     }
   }, [messages]);
 
+  // Enhanced scroll logic: only scroll if user is near bottom or new message is from assistant
   useEffect(() => {
-    scrollToBottom();
+    if (!chatContainerRef.current) return;
+    const container = chatContainerRef.current;
+    const isNearBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+    // Find last message
+    const lastMsg = messages[messages.length - 1];
+    // Only scroll if user is near bottom or last message is from assistant/system
+    if (isNearBottom || (lastMsg && lastMsg.role !== 'user')) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages]);
 
   const scrollToBottom = () => {
@@ -168,7 +179,6 @@ const ChatbotPage: React.FC = () => {
             </p>
           </div>
         </div>
-        
         <div className="container mx-auto px-4 py-8">
           <Card className="max-w-3xl mx-auto h-[600px] flex flex-col">
             <div className="flex justify-between items-center p-4 border-b bg-gray-50">
@@ -185,8 +195,7 @@ const ChatbotPage: React.FC = () => {
                 Clear History
               </Button>
             </div>
-            
-            <div className="flex-grow overflow-y-auto p-4 space-y-4">
+            <div ref={chatContainerRef} className="flex-grow overflow-y-auto p-4 space-y-4">
               {messages.map((message, index) => (
                 <div 
                   key={index}
