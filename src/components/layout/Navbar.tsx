@@ -3,12 +3,33 @@ import { Link } from 'react-router-dom';
 import { Menu, X, PhoneCall, User } from 'lucide-react'; // Import the User icon
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Dock, DockItemData } from "@/components/ui/dock";
+import { VscHome, VscArchive, VscAccount, VscSettingsGear } from "react-icons/vsc";
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  // Dock navigation items
+  const dockItems: DockItemData[] = [
+    {
+      icon: <VscHome size={20} color="#2563eb" />, label: 'Home', onClick: () => window.location.pathname = "/"
+    },
+    {
+      icon: <VscArchive size={20} color="#2563eb" />, label: 'Services', onClick: () => window.location.pathname = "/services"
+    },
+    {
+      icon: <VscAccount size={20} color="#2563eb" />, label: 'About Us', onClick: () => window.location.pathname = "/about"
+    },
+    {
+      icon: <VscSettingsGear size={20} color="#2563eb" />, label: 'Book Now', onClick: () => window.location.pathname = "/booking"
+    },
+    {
+      icon: <VscSettingsGear size={20} color="#f59e42" />, label: 'Emergency', onClick: () => window.open("https://wa.me/917337243180?text=I%20need%20emergency%20vehicle%20service", "_blank")
+    },
+  ];
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-sm">
@@ -25,16 +46,16 @@ const Navbar: React.FC = () => {
           </Link>
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-1">
-          <NavLink to="/">Home</NavLink>
-          <NavLink to="/services">Services</NavLink>
-          <NavLink to="/about">About Us</NavLink>
-          <NavLink to="/booking">Book Now</NavLink>
-          <NavLink as="a" to={undefined} href="https://wa.me/917337243180?text=I%20need%20emergency%20vehicle%20service" target="_blank" rel="noopener noreferrer">
-            Book Emergency Service
-          </NavLink>
-        </nav>
+        {/* Desktop Navigation - replaced with Dock */}
+        <div className="hidden md:flex flex-1 justify-center">
+          <Dock
+            items={dockItems}
+            panelHeight={60}
+            baseItemSize={44}
+            magnification={62}
+            className="border-neutral-200 bg-white/80 dark:bg-black/70"
+          />
+        </div>
 
         {/* Mobile Menu Button */}
         <div className="flex items-center md:hidden">
