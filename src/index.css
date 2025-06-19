@@ -67,10 +67,15 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border transition-colors duration-200;
   }
   body {
     @apply bg-background text-foreground;
+  }
+  
+  /* Ensure smooth theme transitions */
+  html {
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
   }
 }
 
@@ -194,9 +199,9 @@
 .loading-shimmer {
   background: linear-gradient(
     90deg,
-    #f0f0f0 0%,
-    #f8f8f8 50%,
-    #f0f0f0 100%
+    #374151 0%,
+    #4b5563 50%,
+    #374151 100%
   );
   background-size: 200% 100%;
   animation: shine 1.5s linear infinite;
@@ -229,7 +234,7 @@ html {
 
 .card-hover:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
 /* Button Animations */
@@ -266,7 +271,7 @@ html {
 
 .service-card:hover {
   transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
 }
 
 .service-card:hover .service-icon {
@@ -295,7 +300,7 @@ html {
 
 .testimonial-card:hover {
   transform: scale(1.02);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
 /* Form Input Animations */
@@ -305,7 +310,7 @@ html {
 
 .input-focus:focus {
   transform: scale(1.02);
-  box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.2);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
 }
 
 /* Navigation Menu Animations */
@@ -320,10 +325,78 @@ html {
   height: 2px;
   bottom: -2px;
   left: 0;
-  background-color: #0056b3;
+  background-color: #3b82f6;
   transition: width 0.3s ease;
 }
 
 .nav-link:hover::after {
   width: 100%;
+}
+
+/* Dark mode specific adjustments */
+.dark .bg-quickfix-light-blue {
+  @apply bg-slate-800;
+}
+
+.dark .bg-quickfix-gray {
+  @apply bg-slate-900;
+}
+
+.dark .text-quickfix-dark {
+  @apply text-slate-100;
+}
+
+/* Enhanced card hover effects for dark mode */
+.dark .card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode gradient adjustments */
+.dark .bg-gradient-to-br {
+  @apply from-slate-900 to-slate-800;
+}
+
+.dark .bg-gradient-to-r {
+  @apply from-slate-800 to-slate-700;
+}
+
+/* Service card dark mode enhancements */
+.dark .service-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Testimonial card dark mode */
+.dark .testimonial-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Loading shimmer dark mode */
+.dark .loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    #374151 0%,
+    #4b5563 50%,
+    #374151 100%
+  );
+  background-size: 200% 100%;
+  animation: shine 1.5s linear infinite;
+}
+
+/* Form input focus dark mode */
+.dark .input-focus:focus {
+  transform: scale(1.02);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+/* Navigation link hover effect dark mode */
+.dark .nav-link::after {
+  background-color: #3b82f6;
+}
+
+/* Floating chatbot dark mode */
+.dark .floating-chatbot {
+  @apply bg-slate-800 border-slate-700;
 }

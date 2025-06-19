@@ -1,151 +1,154 @@
+
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Menu, X, PhoneCall, User } from 'lucide-react'; // Import the User icon
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { Menu, X, User, LogOut } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import ThemeToggle from '@/components/theme/ThemeToggle';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const [isOpen, setIsOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
   };
 
+  const navLinks = [
+    { to: '/', label: 'Home' },
+    { to: '/services', label: 'Services' },
+    { to: '/about', label: 'About' },
+    { to: '/booking', label: 'Book Service' },
+  ];
+
   return (
-    <header className="sticky top-0 z-50 w-full bg-white shadow-sm">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        {/* Logo and Profile */}
-        <div className="flex items-center space-x-4">
-          <Link to="/" className="flex items-center">
-            <span className="text-2xl font-bold text-quickfix-blue">
-              Quick<span className="text-quickfix-orange">Fix</span>
-            </span>
+    <nav className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border sticky top-0 z-50 transition-colors duration-200">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link to="/" className="text-2xl font-bold text-quickfix-blue hover:text-quickfix-orange transition-colors">
+            Quick<span className="text-quickfix-orange">Fix</span>
           </Link>
-          <Link to="/profile" className="flex items-center">
-            <User className="h-6 w-6 text-quickfix-blue" aria-label="Profile" />
-          </Link>
-        </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-1">
-          <NavLink to="/">Home</NavLink>
-          <NavLink to="/services">Services</NavLink>
-          <NavLink to="/about">About Us</NavLink>
-          <NavLink to="/booking">Book Now</NavLink>
-          <NavLink as="a" to={undefined} href="https://wa.me/917337243180?text=I%20need%20emergency%20vehicle%20service" target="_blank" rel="noopener noreferrer">
-            Book Emergency Service
-          </NavLink>
-        </nav>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            {navLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="text-foreground hover:text-quickfix-orange transition-colors relative group"
+              >
+                {link.label}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-quickfix-orange transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+            ))}
+          </div>
 
-        {/* Mobile Menu Button */}
-        <div className="flex items-center md:hidden">
-          <Button variant="link" size="icon" onClick={toggleMenu} aria-label="Menu">
-            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </Button>
-        </div>
-
-        {/* Phone Number - Desktop */}
-        <div className="hidden md:flex items-center">
-          <Button asChild variant="outline" className="flex items-center p-2" aria-label="Call Us">
-            <a href="tel:+917337243180">
-              <PhoneCall className="h-5 w-5 text-quickfix-orange" />
-            </a>
-          </Button>
-        </div>
-      </div>
-
-      {/* Mobile Navigation */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-white shadow-lg py-4 px-4">
-          <nav className="flex flex-col space-y-3">
-            <MobileNavLink to="/" onClick={toggleMenu}>Home</MobileNavLink>
-            <MobileNavLink to="/services" onClick={toggleMenu}>Services</MobileNavLink>
-            <MobileNavLink to="/about" onClick={toggleMenu}>About Us</MobileNavLink>
-            <MobileNavLink to="/booking" onClick={toggleMenu}>Book Now</MobileNavLink>
-            <MobileNavLink as="a" to={undefined} href="https://wa.me/917337243180?text=I%20need%20emergency%20vehicle%20service" target="_blank" rel="noopener noreferrer">
-              Book Emergency Service
-            </MobileNavLink>
-            <div className="pt-3 border-t border-gray-200">
-              <Button asChild className="w-full flex items-center justify-center" variant="outline" aria-label="Call Us">
-                <a href="tel:+917337243180">
-                  <PhoneCall className="h-5 w-5 text-quickfix-orange" />
-                </a>
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center space-x-4">
+            <ThemeToggle />
+            
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
+                    <User className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 bg-background border-border" align="end">
+                  <DropdownMenuItem onClick={() => navigate('/profile')} className="cursor-pointer">
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button asChild variant="outline">
+                <Link to="/auth">Sign In</Link>
               </Button>
-            </div>
-          </nav>
+            )}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center space-x-2">
+            <ThemeToggle />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsOpen(!isOpen)}
+              className="h-9 w-9"
+            >
+              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
         </div>
-      )}
-    </header>
-  );
-};
 
-interface NavLinkProps {
-  to: string;
-  children: React.ReactNode;
-  className?: string;
-  as?: string;
-  href?: string;
-  target?: string;
-  rel?: string;
-}
-
-const NavLink: React.FC<NavLinkProps> = ({
-  to,
-  children,
-  className,
-  as,
-  href,
-  target,
-  rel
-}) => {
-  if (as === 'a') {
-    return (
-      <a
-        href={href}
-        target={target}
-        rel={rel}
-        className={cn("px-3 py-2 text-base font-medium text-gray-700 hover:text-quickfix-blue hover:bg-quickfix-light-blue rounded-md transition-colors", className)}
-      >
-        {children}
-      </a>
-    );
-  }
-  return (
-    <Link to={to} className={cn("px-3 py-2 text-base font-medium text-gray-700 hover:text-quickfix-blue hover:bg-quickfix-light-blue rounded-md transition-colors", className)}>
-      {children}
-    </Link>
-  );
-};
-
-interface MobileNavLinkProps extends NavLinkProps {
-  onClick?: () => void;
-}
-
-const MobileNavLink: React.FC<MobileNavLinkProps> = ({
-  to,
-  children,
-  onClick,
-  as,
-  href,
-  target,
-  rel
-}) => {
-  if (as === 'a') {
-    return (
-      <a
-        href={href}
-        target={target}
-        rel={rel}
-        className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-quickfix-blue hover:bg-quickfix-light-blue rounded-md"
-        onClick={onClick}
-      >
-        {children}
-      </a>
-    );
-  }
-  return (
-    <Link to={to} className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-quickfix-blue hover:bg-quickfix-light-blue rounded-md" onClick={onClick}>
-      {children}
-    </Link>
+        {/* Mobile Navigation */}
+        {isOpen && (
+          <div className="md:hidden py-4 border-t border-border">
+            <div className="flex flex-col space-y-4">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="text-foreground hover:text-quickfix-orange transition-colors px-4 py-2"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              
+              <div className="px-4 pt-4 border-t border-border">
+                {user ? (
+                  <div className="space-y-2">
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start"
+                      onClick={() => {
+                        navigate('/profile');
+                        setIsOpen(false);
+                      }}
+                    >
+                      <User className="mr-2 h-4 w-4" />
+                      Profile
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start"
+                      onClick={() => {
+                        handleSignOut();
+                        setIsOpen(false);
+                      }}
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign Out
+                    </Button>
+                  </div>
+                ) : (
+                  <Button asChild variant="outline" className="w-full">
+                    <Link to="/auth" onClick={() => setIsOpen(false)}>Sign In</Link>
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </nav>
   );
 };
 

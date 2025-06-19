@@ -1,16 +1,19 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Clock, Shield, Star } from 'lucide-react';
+
 const HeroSection: React.FC = () => {
-  return <div className="relative bg-gradient-to-br from-white to-quickfix-light-blue overflow-hidden">
+  return (
+    <div className="relative bg-gradient-to-br from-background to-muted overflow-hidden transition-colors duration-200">
       <div className="container mx-auto px-4 py-12 md:py-24">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div className="z-10 animate-slide-right">
-            <h1 className="text-4xl md:text-5xl font-bold text-quickfix-dark mb-4 font-heading">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 font-heading transition-colors">
               Vehicle Repairs at Your <span className="text-quickfix-orange">Doorstep</span>
             </h1>
-            <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-lg">
+            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-lg transition-colors">
               QuickFix revolutionizes vehicle maintenance with certified mechanics who come to you. Same-day service available throughout Hyderabad.
             </p>
             
@@ -20,7 +23,7 @@ const HeroSection: React.FC = () => {
                   Book a Service <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="border-quickfix-blue text-quickfix-blue hover:bg-quickfix-light-blue">
+              <Button asChild variant="outline" size="lg" className="border-quickfix-blue text-quickfix-blue hover:bg-quickfix-light-blue dark:hover:bg-accent">
                 <Link to="/services">
                   Our Services
                 </Link>
@@ -29,19 +32,19 @@ const HeroSection: React.FC = () => {
             
             <div className="flex flex-col sm:flex-row items-center gap-6">
               <div className="flex items-center">
-                <div className="bg-white p-2 rounded-full shadow-md mr-3">
+                <div className="bg-card p-2 rounded-full shadow-md mr-3 border">
                   <Clock className="h-5 w-5 text-quickfix-orange" />
                 </div>
                 <span className="font-medium">Same-Day Service</span>
               </div>
               <div className="flex items-center">
-                <div className="bg-white p-2 rounded-full shadow-md mr-3">
+                <div className="bg-card p-2 rounded-full shadow-md mr-3 border">
                   <Shield className="h-5 w-5 text-quickfix-orange" />
                 </div>
                 <span className="font-medium">Certified Mechanics</span>
               </div>
               <div className="flex items-center">
-                <div className="bg-white p-2 rounded-full shadow-md mr-3">
+                <div className="bg-card p-2 rounded-full shadow-md mr-3 border">
                   <Star className="h-5 w-5 text-quickfix-orange" />
                 </div>
                 <span className="font-medium">5-Star Service</span>
@@ -61,19 +64,21 @@ const HeroSection: React.FC = () => {
       </div>
       
       {/* Booking banner */}
-      <div className="bg-quickfix-blue py-8 text-white">
+      <div className="bg-quickfix-blue dark:bg-slate-800 py-8 text-white transition-colors duration-200">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="mb-5 md:mb-0 text-center md:text-left">
               <h2 className="text-xl md:text-2xl font-semibold mb-2">Need emergency vehicle repair?</h2>
-              <p className="text-blue-100">Our mechanics can be at your location within minutes</p>
+              <p className="text-blue-100 dark:text-slate-300">Our mechanics can be at your location within minutes</p>
             </div>
-            <Button asChild className="bg-white text-quickfix-blue hover:bg-gray-100" size="lg">
+            <Button asChild className="bg-white text-quickfix-blue hover:bg-gray-100 dark:bg-slate-200 dark:hover:bg-slate-300" size="lg">
               <Link to="/booking">Book Emergency Service</Link>
             </Button>
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default HeroSection;
