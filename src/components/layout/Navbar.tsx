@@ -1,14 +1,41 @@
+
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Menu, X, PhoneCall, User } from 'lucide-react'; // Import the User icon
+import { Link, useNavigate } from 'react-router-dom';
+import { Menu, X, PhoneCall, User, Home, Wrench, Info, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Dock, DockItemData } from '@/components/ui/dock';
 import { cn } from '@/lib/utils';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  const dockItems: DockItemData[] = [
+    {
+      icon: <Home className="h-5 w-5 text-quickfix-blue" />,
+      label: 'Home',
+      onClick: () => navigate('/')
+    },
+    {
+      icon: <Wrench className="h-5 w-5 text-quickfix-blue" />,
+      label: 'Services',
+      onClick: () => navigate('/services')
+    },
+    {
+      icon: <Info className="h-5 w-5 text-quickfix-blue" />,
+      label: 'About Us',
+      onClick: () => navigate('/about')
+    },
+    {
+      icon: <Calendar className="h-5 w-5 text-quickfix-orange" />,
+      label: 'Book Now',
+      onClick: () => navigate('/booking')
+    }
+  ];
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-sm">
@@ -25,16 +52,17 @@ const Navbar: React.FC = () => {
           </Link>
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-1">
-          <NavLink to="/">Home</NavLink>
-          <NavLink to="/services">Services</NavLink>
-          <NavLink to="/about">About Us</NavLink>
-          <NavLink to="/booking">Book Now</NavLink>
-          <NavLink as="a" to={undefined} href="https://wa.me/917337243180?text=I%20need%20emergency%20vehicle%20service" target="_blank" rel="noopener noreferrer">
-            Book Emergency Service
-          </NavLink>
-        </nav>
+        {/* Desktop Navigation - Animated Dock */}
+        <div className="hidden md:flex items-center">
+          <Dock 
+            items={dockItems}
+            panelHeight={56}
+            baseItemSize={48}
+            magnification={64}
+            distance={150}
+            className="border-quickfix-blue/20 bg-white/80 backdrop-blur-md"
+          />
+        </div>
 
         {/* Mobile Menu Button */}
         <div className="flex items-center md:hidden">
