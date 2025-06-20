@@ -75,8 +75,7 @@ const Index: React.FC = () => {
             <form
               onSubmit={e => {
                 e.preventDefault();
-                window.open(getReferralLink(), '_blank');
-                setShowReferralDialog(false);
+                handleSendReferral();
               }}
               className="space-y-3"
             >
