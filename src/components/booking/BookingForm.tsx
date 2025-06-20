@@ -92,7 +92,7 @@ const BookingForm: React.FC = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      serviceOption: "onsite",
+      serviceOption: "pickup",
     },
   });
 
