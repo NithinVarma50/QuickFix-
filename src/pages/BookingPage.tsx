@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import BookingForm from '@/components/booking/BookingForm';
+import WhatsAppBookingForm from '@/components/booking/WhatsAppBookingForm';
 import { Phone, Clock, MapPin, ShieldCheck } from 'lucide-react';
 const BookingPage: React.FC = () => {
   return <div className="flex flex-col min-h-screen">
@@ -25,6 +26,12 @@ const BookingPage: React.FC = () => {
               <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
                 <h2 className="text-2xl font-bold mb-6">Fill in your details</h2>
                 <BookingForm />
+                <div className="my-8 border-t pt-8">
+                  <h3 className="text-xl font-semibold mb-4 text-green-700 flex items-center gap-2">
+                    Or book instantly via WhatsApp
+                  </h3>
+                  <WhatsAppBookingForm />
+                </div>
               </div>
             </div>
             
