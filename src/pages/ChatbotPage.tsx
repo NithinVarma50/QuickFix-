@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Send, Wrench } from "lucide-react";
+import { Send, Wrench, Bot } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -209,8 +209,9 @@ const ChatbotPage: React.FC = () => {
                         </>
                       ) : (
                         <>
-                          <AvatarImage src="/lovable-uploads/7236feb8-e9ef-43d3-9100-9cdf7f9de7b0.png" />
-                          <AvatarFallback>🤖</AvatarFallback>
+                          <AvatarFallback className="bg-quickfix-blue">
+                            <Bot className="h-4 w-4 text-white" />
+                          </AvatarFallback>
                         </>
                       )}
                     </Avatar>
@@ -238,8 +239,9 @@ const ChatbotPage: React.FC = () => {
                 <div className="flex justify-start">
                   <div className="flex max-w-[80%] flex-row">
                     <Avatar className="h-8 w-8 mr-2">
-                      <AvatarImage src="/lovable-uploads/7236feb8-e9ef-43d3-9100-9cdf7f9de7b0.png" />
-                      <AvatarFallback>🤖</AvatarFallback>
+                      <AvatarFallback className="bg-quickfix-blue">
+                        <Bot className="h-4 w-4 text-white" />
+                      </AvatarFallback>
                     </Avatar>
                     <div className="rounded-lg p-3 bg-gray-50 text-gray-800 border border-gray-200">
                       <div className="flex items-center space-x-2">
