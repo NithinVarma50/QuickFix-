@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { z } from "zod";
 import { Wrench, Bot } from "lucide-react";
@@ -15,44 +16,6 @@ type Message = {
   role: 'system' | 'user' | 'assistant';
   content: string;
   timestamp?: Date;
-};
-
-const formatAIResponse = (content: string) => {
-  // Split content into sections based on emojis and headers
-  const sections = content.split(/(?=🔍|🛠️|⚠️|💰|🚨|📞)/);
-  
-  return sections.map((section, index) => {
-    if (!section.trim()) return null;
-    
-    // Check if this is a header section
-    const isHeader = /^(🔍|🛠️|⚠️|💰|🚨|📞)/.test(section.trim());
-    
-    if (isHeader) {
-      const lines = section.trim().split('\n');
-      const headerLine = lines[0];
-      const content = lines.slice(1).join('\n').trim();
-      
-      return (
-        <div key={index} className="mb-4">
-          <div className="font-semibold text-quickfix-blue mb-2 flex items-center gap-2">
-            {headerLine}
-          </div>
-          {content && (
-            <div className="text-gray-700 ml-6 whitespace-pre-wrap leading-relaxed">
-              {content}
-            </div>
-          )}
-        </div>
-      );
-    } else {
-      // Regular content without emoji headers
-      return (
-        <div key={index} className="mb-3 text-gray-700 leading-relaxed">
-          {section.trim()}
-        </div>
-      );
-    }
-  }).filter(Boolean);
 };
 
 const ChatbotPage: React.FC = () => {
@@ -203,8 +166,8 @@ const ChatbotPage: React.FC = () => {
           </div>
         </div>
         <div className="container mx-auto px-4 py-8">
-          <Card className="max-w-4xl mx-auto h-[600px] flex flex-col bg-white/80 backdrop-blur-lg border-quickfix-blue/20 shadow-xl rounded-3xl">
-            <div className="flex justify-between items-center p-4 border-b bg-white/60 backdrop-blur-sm rounded-t-3xl">
+          <Card className="max-w-3xl mx-auto h-[600px] flex flex-col bg-white/70 backdrop-blur-lg border-quickfix-blue/20 shadow-xl">
+            <div className="flex justify-between items-center p-4 border-b bg-white/50 backdrop-blur-sm rounded-t-lg">
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 rounded-full bg-green-500"></div>
                 <span className="text-sm text-gray-600">AI remembers your last 10 conversations</span>
@@ -213,49 +176,43 @@ const ChatbotPage: React.FC = () => {
                 variant="outline" 
                 size="sm" 
                 onClick={clearHistory}
-                className="text-xs border-quickfix-blue/30 text-quickfix-blue hover:bg-quickfix-blue/10 bg-white/80 backdrop-blur-sm rounded-xl"
+                className="text-xs border-quickfix-blue/30 text-quickfix-blue hover:bg-quickfix-blue/10 bg-white/80 backdrop-blur-sm"
               >
                 Clear History
               </Button>
             </div>
-            <div ref={chatContainerRef} className="flex-grow overflow-y-auto p-6 space-y-6">
+            <div ref={chatContainerRef} className="flex-grow overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-white/30 to-white/20 backdrop-blur-sm">
               {messages.map((message, index) => (
                 <div 
                   key={index}
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`flex max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <Avatar className={`h-10 w-10 ${message.role === 'user' ? 'ml-3' : 'mr-3'} flex-shrink-0`}>
+                  <div className={`flex max-w-[80%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <Avatar className={`h-8 w-8 ${message.role === 'user' ? 'ml-2' : 'mr-2'}`}>
                       {message.role === 'user' ? (
-                        <AvatarFallback className="bg-quickfix-blue text-white font-semibold text-sm">U</AvatarFallback>
+                        <>
+                          <AvatarFallback className="bg-quickfix-blue text-white font-semibold">U</AvatarFallback>
+                        </>
                       ) : (
-                        <AvatarFallback className="bg-quickfix-blue text-white">
-                          <Bot className="h-5 w-5" />
-                        </AvatarFallback>
+                        <>
+                          <AvatarFallback className="bg-quickfix-blue text-white">
+                            <Bot className="h-4 w-4" />
+                          </AvatarFallback>
+                        </>
                       )}
                     </Avatar>
                     
                     <div 
-                      className={`rounded-3xl p-5 shadow-lg ${
+                      className={`rounded-3xl p-4 ${
                         message.role === 'user' 
-                          ? 'bg-quickfix-blue text-white backdrop-blur-sm' 
+                          ? 'bg-quickfix-blue text-white shadow-lg backdrop-blur-sm' 
                           : message.role === 'system' 
-                            ? 'bg-white/90 backdrop-blur-lg text-gray-800 border border-quickfix-blue/20' 
-                            : 'bg-white/90 backdrop-blur-lg text-gray-800 border border-gray-200/50'
+                            ? 'bg-white/80 backdrop-blur-lg text-gray-800 border border-quickfix-blue/20 shadow-lg' 
+                            : 'bg-white/80 backdrop-blur-lg text-gray-800 border border-gray-200/50 shadow-lg'
                       }`}
                     >
-                      {message.role === 'assistant' && message.content.includes('🔍') ? (
-                        <div className="space-y-1">
-                          {formatAIResponse(message.content)}
-                        </div>
-                      ) : (
-                        <div className="whitespace-pre-wrap leading-relaxed">
-                          {message.content}
-                        </div>
-                      )}
-                      <div className={`text-xs mt-3 ${
-                        message.role === 'user' ? 'text-blue-200' : 'text-gray-500'
-                      }`}>
+                      <div className="whitespace-pre-wrap leading-relaxed">{message.content}</div>
+                      <div className={`text-xs mt-2 ${message.role === 'user' ? 'text-blue-200' : 'text-gray-500'}`}>
                         {formatTime(message.timestamp)}
                       </div>
                     </div>
@@ -266,13 +223,13 @@ const ChatbotPage: React.FC = () => {
               
               {loading && (
                 <div className="flex justify-start">
-                  <div className="flex max-w-[85%] flex-row">
-                    <Avatar className="h-10 w-10 mr-3 flex-shrink-0">
+                  <div className="flex max-w-[80%] flex-row">
+                    <Avatar className="h-8 w-8 mr-2">
                       <AvatarFallback className="bg-quickfix-blue text-white">
-                        <Bot className="h-5 w-5" />
+                        <Bot className="h-4 w-4" />
                       </AvatarFallback>
                     </Avatar>
-                    <div className="rounded-3xl p-5 bg-white/90 backdrop-blur-lg text-gray-800 border border-gray-200/50 shadow-lg">
+                    <div className="rounded-3xl p-4 bg-white/80 backdrop-blur-lg text-gray-800 border border-gray-200/50 shadow-lg">
                       <div className="flex items-center space-x-2">
                         <div className="w-2 h-2 rounded-full bg-quickfix-blue animate-bounce" style={{ animationDelay: '0ms' }}></div>
                         <div className="w-2 h-2 rounded-full bg-quickfix-blue animate-bounce" style={{ animationDelay: '150ms' }}></div>
@@ -285,7 +242,7 @@ const ChatbotPage: React.FC = () => {
               )}
             </div>
             
-            <div className="border-t bg-white/50 backdrop-blur-lg rounded-b-3xl">
+            <div className="border-t bg-white/40 backdrop-blur-lg rounded-b-lg">
               <AIInputWithLoading
                 placeholder="Describe your vehicle issue... (e.g., 'My car won't start')"
                 onSubmit={handleSubmit}
@@ -295,10 +252,10 @@ const ChatbotPage: React.FC = () => {
             </div>
           </Card>
           
-          <div className="max-w-4xl mx-auto mt-8 bg-white/80 backdrop-blur-lg rounded-3xl p-6 border border-quickfix-blue/20 shadow-lg">
+          <div className="max-w-3xl mx-auto mt-8 bg-white/70 backdrop-blur-lg rounded-xl p-6 border border-quickfix-blue/20 shadow-lg">
             <h2 className="text-xl font-semibold mb-4 text-quickfix-dark">💡 Tips for Better Diagnosis</h2>
             <div className="grid md:grid-cols-2 gap-4">
-              <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 border border-quickfix-blue/10">
+              <div className="bg-white/50 backdrop-blur-sm rounded-lg p-4 border border-quickfix-blue/10">
                 <h3 className="font-medium mb-2 text-quickfix-blue">🔍 Be Specific About:</h3>
                 <ul className="space-y-1 text-sm text-gray-700">
                   <li>• Strange noises (when they occur)</li>
@@ -307,7 +264,7 @@ const ChatbotPage: React.FC = () => {
                   <li>• How long it's been happening</li>
                 </ul>
               </div>
-              <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 border border-quickfix-blue/10">
+              <div className="bg-white/50 backdrop-blur-sm rounded-lg p-4 border border-quickfix-blue/10">
                 <h3 className="font-medium mb-2 text-quickfix-blue">🚗 Include Vehicle Info:</h3>
                 <ul className="space-y-1 text-sm text-gray-700">
                   <li>• Car or bike</li>
@@ -318,7 +275,7 @@ const ChatbotPage: React.FC = () => {
               </div>
             </div>
             <div className="mt-6 text-center">
-              <Button asChild className="bg-quickfix-orange hover:bg-quickfix-orange/90 shadow-lg backdrop-blur-sm rounded-xl">
+              <Button asChild className="bg-quickfix-orange hover:bg-quickfix-orange/90 shadow-lg backdrop-blur-sm">
                 <Link to="/booking">🔧 Book a QuickFix Mechanic</Link>
               </Button>
             </div>
