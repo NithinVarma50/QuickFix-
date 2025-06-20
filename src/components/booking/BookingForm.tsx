@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
@@ -387,13 +386,14 @@ const BookingForm: React.FC = () => {
                         defaultValue={field.value}
                         className="flex flex-col space-y-1"
                       >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="onsite" id="onsite" />
+                        <div className="flex items-center space-x-2 opacity-50 cursor-not-allowed">
+                          <RadioGroupItem value="onsite" id="onsite" disabled />
                           <label
                             htmlFor="onsite"
                             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                           >
                             Onsite Repair (mechanic comes to your location)
+                            <span className="ml-2 text-xs text-yellow-600">Available soon</span>
                           </label>
                         </div>
                         <div className="flex items-center space-x-2">
