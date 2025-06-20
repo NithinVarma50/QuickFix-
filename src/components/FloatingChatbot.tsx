@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { MessageCircle, X } from 'lucide-react';
+import { Bot, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
@@ -26,11 +27,9 @@ const FloatingChatbot: React.FC = () => {
           <Card className="mb-4 p-4 w-80 bg-white shadow-lg border border-quickfix-blue/20 animate-fade-in">
             <div className="flex justify-between items-center mb-3">
               <div className="flex items-center space-x-2">
-                <img 
-                  src="/lovable-uploads/7236feb8-e9ef-43d3-9100-9cdf7f9de7b0.png" 
-                  alt="QuickFix AI" 
-                  className="w-8 h-8 rounded-full"
-                />
+                <div className="w-8 h-8 rounded-full bg-quickfix-blue flex items-center justify-center">
+                  <Bot className="h-5 w-5 text-white" />
+                </div>
                 <div>
                   <h3 className="font-semibold text-quickfix-dark">QuickFix AI</h3>
                   <p className="text-xs text-gray-500">Online now</p>
@@ -77,7 +76,7 @@ const FloatingChatbot: React.FC = () => {
           onClick={toggleChatPreview}
           className="h-14 w-14 rounded-full bg-quickfix-blue hover:bg-quickfix-blue/90 shadow-lg transition-all duration-300 hover:scale-110"
         >
-          <MessageCircle className="h-6 w-6 text-white" />
+          <Bot className="h-6 w-6 text-white" />
         </Button>
       </div>
     </>
