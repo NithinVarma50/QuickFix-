@@ -1,22 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Send, Wrench, Bot } from "lucide-react";
+import { Wrench, Bot } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-
-const formSchema = z.object({
-  message: z.string().min(1, { message: "Message cannot be empty" }),
-});
+import { AIInputWithLoading } from "@/components/ui/ai-input-with-loading";
 
 type Message = {
   role: 'system' | 'user' | 'assistant';
@@ -35,13 +28,6 @@ const ChatbotPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      message: "",
-    },
-  });
 
   // Load conversation history from localStorage on component mount
   useEffect(() => {
@@ -94,16 +80,15 @@ const ChatbotPage: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function handleSubmit(messageContent: string) {
     const userMessage: Message = {
       role: 'user',
-      content: values.message,
+      content: messageContent,
       timestamp: new Date(),
     };
     
     // Add user message to chat
     setMessages(prev => [...prev, userMessage]);
-    form.reset();
     
     setLoading(true);
     
@@ -165,7 +150,7 @@ const ChatbotPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-quickfix-light-blue/20 to-white">
       <Navbar />
       <main className="flex-grow">
         <div className="bg-quickfix-blue text-white py-12">
@@ -180,8 +165,8 @@ const ChatbotPage: React.FC = () => {
           </div>
         </div>
         <div className="container mx-auto px-4 py-8">
-          <Card className="max-w-3xl mx-auto h-[600px] flex flex-col">
-            <div className="flex justify-between items-center p-4 border-b bg-gray-50">
+          <Card className="max-w-3xl mx-auto h-[600px] flex flex-col bg-white/80 backdrop-blur-sm border-quickfix-blue/20 shadow-xl">
+            <div className="flex justify-between items-center p-4 border-b bg-gradient-to-r from-quickfix-light-blue/30 to-white/50 backdrop-blur-sm">
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 rounded-full bg-green-500"></div>
                 <span className="text-sm text-gray-600">AI remembers your last 10 conversations</span>
@@ -190,12 +175,12 @@ const ChatbotPage: React.FC = () => {
                 variant="outline" 
                 size="sm" 
                 onClick={clearHistory}
-                className="text-xs"
+                className="text-xs border-quickfix-blue/30 text-quickfix-blue hover:bg-quickfix-blue/10"
               >
                 Clear History
               </Button>
             </div>
-            <div ref={chatContainerRef} className="flex-grow overflow-y-auto p-4 space-y-4">
+            <div ref={chatContainerRef} className="flex-grow overflow-y-auto p-6 space-y-4">
               {messages.map((message, index) => (
                 <div 
                   key={index}
@@ -205,7 +190,7 @@ const ChatbotPage: React.FC = () => {
                     <Avatar className={`h-8 w-8 ${message.role === 'user' ? 'ml-2' : 'mr-2'}`}>
                       {message.role === 'user' ? (
                         <>
-                          <AvatarFallback>U</AvatarFallback>
+                          <AvatarFallback className="bg-gray-500">U</AvatarFallback>
                         </>
                       ) : (
                         <>
@@ -219,10 +204,10 @@ const ChatbotPage: React.FC = () => {
                     <div 
                       className={`rounded-lg p-3 ${
                         message.role === 'user' 
-                          ? 'bg-quickfix-blue text-white' 
+                          ? 'bg-quickfix-blue text-white shadow-md' 
                           : message.role === 'system' 
-                            ? 'bg-gradient-to-r from-quickfix-light-blue to-white text-gray-800 border border-quickfix-blue/20' 
-                            : 'bg-gray-50 text-gray-800 border border-gray-200'
+                            ? 'bg-gradient-to-r from-quickfix-light-blue/30 to-white/70 text-gray-800 border border-quickfix-blue/20 shadow-sm' 
+                            : 'bg-white/70 text-gray-800 border border-gray-200 shadow-sm backdrop-blur-sm'
                       }`}
                     >
                       <div className="whitespace-pre-wrap">{message.content}</div>
@@ -243,7 +228,7 @@ const ChatbotPage: React.FC = () => {
                         <Bot className="h-4 w-4 text-white" />
                       </AvatarFallback>
                     </Avatar>
-                    <div className="rounded-lg p-3 bg-gray-50 text-gray-800 border border-gray-200">
+                    <div className="rounded-lg p-3 bg-white/70 text-gray-800 border border-gray-200 shadow-sm backdrop-blur-sm">
                       <div className="flex items-center space-x-2">
                         <div className="w-2 h-2 rounded-full bg-quickfix-blue animate-bounce" style={{ animationDelay: '0ms' }}></div>
                         <div className="w-2 h-2 rounded-full bg-quickfix-blue animate-bounce" style={{ animationDelay: '150ms' }}></div>
@@ -256,34 +241,17 @@ const ChatbotPage: React.FC = () => {
               )}
             </div>
             
-            <div className="p-4 border-t bg-gray-50">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="flex space-x-2">
-                  <FormField
-                    control={form.control}
-                    name="message"
-                    render={({ field }) => (
-                      <FormItem className="flex-grow">
-                        <FormControl>
-                          <Input 
-                            placeholder="Describe your vehicle issue... (e.g., 'My car won't start')" 
-                            {...field} 
-                            disabled={loading}
-                            className="border-quickfix-blue/30 focus:border-quickfix-blue"
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit" disabled={loading} className="bg-quickfix-blue hover:bg-quickfix-blue/90">
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </form>
-              </Form>
+            <div className="border-t bg-gradient-to-r from-quickfix-light-blue/20 to-white/50 backdrop-blur-sm">
+              <AIInputWithLoading
+                placeholder="Describe your vehicle issue... (e.g., 'My car won't start')"
+                onSubmit={handleSubmit}
+                loadingDuration={2000}
+                className="px-2"
+              />
             </div>
           </Card>
           
-          <div className="max-w-3xl mx-auto mt-8 bg-gradient-to-r from-quickfix-light-blue to-white rounded-lg p-6 border border-quickfix-blue/20">
+          <div className="max-w-3xl mx-auto mt-8 bg-gradient-to-r from-quickfix-light-blue/30 to-white/80 rounded-lg p-6 border border-quickfix-blue/20 backdrop-blur-sm shadow-lg">
             <h2 className="text-xl font-semibold mb-4 text-quickfix-dark">💡 Tips for Better Diagnosis</h2>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
@@ -306,7 +274,7 @@ const ChatbotPage: React.FC = () => {
               </div>
             </div>
             <div className="mt-6 text-center">
-              <Button asChild className="bg-quickfix-orange hover:bg-quickfix-orange/90">
+              <Button asChild className="bg-quickfix-orange hover:bg-quickfix-orange/90 shadow-md">
                 <Link to="/booking">🔧 Book a QuickFix Mechanic</Link>
               </Button>
             </div>
