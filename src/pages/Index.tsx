@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -37,6 +38,12 @@ const Index: React.FC = () => {
     window.open(url, '_blank');
     setShowReferralDialog(false);
     setRefName(''); setRefPhone('');
+  };
+
+  const handleBackClick = () => {
+    setShowReferralDialog(false);
+    setRefName(''); 
+    setRefPhone('');
   };
 
   return (
@@ -97,9 +104,19 @@ const Index: React.FC = () => {
                 value={refPhone}
                 onChange={e => setRefPhone(e.target.value)}
               />
-              <AlertDialogAction asChild>
-                <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded">Register via WhatsApp</button>
-              </AlertDialogAction>
+              <div className="flex gap-2">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={handleBackClick}
+                  className="flex-1"
+                >
+                  Back
+                </Button>
+                <AlertDialogAction asChild>
+                  <button type="submit" className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded">Register via WhatsApp</button>
+                </AlertDialogAction>
+              </div>
             </form>
           </AlertDialogContent>
         </AlertDialog>
