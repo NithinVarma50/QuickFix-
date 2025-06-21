@@ -1,4 +1,5 @@
 
+
 import React, { useEffect, useState, useRef } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -105,6 +106,9 @@ const Index: React.FC = () => {
                 onChange={e => setRefPhone(e.target.value)}
               />
               <div className="flex gap-2">
+                <AlertDialogAction asChild>
+                  <button type="submit" className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded">Register</button>
+                </AlertDialogAction>
                 <Button 
                   type="button" 
                   variant="outline" 
@@ -113,9 +117,6 @@ const Index: React.FC = () => {
                 >
                   Back
                 </Button>
-                <AlertDialogAction asChild>
-                  <button type="submit" className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded">Register via WhatsApp</button>
-                </AlertDialogAction>
               </div>
             </form>
           </AlertDialogContent>
@@ -133,3 +134,4 @@ const Index: React.FC = () => {
 };
 
 export default Index;
+
