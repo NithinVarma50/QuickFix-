@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { z } from "zod";
 import { Wrench, Bot } from "lucide-react";
 import { toast } from "sonner";
@@ -10,6 +10,7 @@ import Footer from '@/components/layout/Footer';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { AIInputWithLoading } from "@/components/ui/ai-input-with-loading";
 
 type Message = {
@@ -28,7 +29,7 @@ const ChatbotPage: React.FC = () => {
   ]);
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   // Load conversation history from localStorage on component mount
   useEffect(() => {
@@ -63,23 +64,24 @@ const ChatbotPage: React.FC = () => {
     }
   }, [messages]);
 
-  // Enhanced scroll logic: only scroll if user is near bottom or new message is from assistant
-  useEffect(() => {
-    if (!chatContainerRef.current) return;
-    const container = chatContainerRef.current;
-    const isNearBottom =
-      container.scrollHeight - container.scrollTop - container.clientHeight < 100;
-    // Find last message
-    const lastMsg = messages[messages.length - 1];
-    // Only scroll if user is near bottom or last message is from assistant/system
-    if (isNearBottom || (lastMsg && lastMsg.role !== 'user')) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  // Optimized scroll to bottom with smooth behavior
+  const scrollToBottom = useCallback(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'end'
+      });
     }
-  }, [messages]);
+  }, []);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  // Enhanced scroll logic with throttling
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+    
+    return () => clearTimeout(timeoutId);
+  }, [messages, scrollToBottom]);
 
   async function handleSubmit(messageContent: string) {
     const userMessage: Message = {
@@ -181,66 +183,79 @@ const ChatbotPage: React.FC = () => {
                 Clear History
               </Button>
             </div>
-            <div ref={chatContainerRef} className="flex-grow overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-white/30 to-white/20 backdrop-blur-sm">
-              {messages.map((message, index) => (
-                <div 
-                  key={index}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className={`flex max-w-[80%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <Avatar className={`h-8 w-8 ${message.role === 'user' ? 'ml-2' : 'mr-2'}`}>
-                      {message.role === 'user' ? (
-                        <>
-                          <AvatarFallback className="bg-quickfix-blue text-white font-semibold">U</AvatarFallback>
-                        </>
-                      ) : (
-                        <>
-                          <AvatarFallback className="bg-quickfix-blue text-white">
-                            <Bot className="h-4 w-4" />
-                          </AvatarFallback>
-                        </>
-                      )}
-                    </Avatar>
-                    
-                    <div 
-                      className={`rounded-3xl p-4 ${
-                        message.role === 'user' 
-                          ? 'bg-quickfix-blue text-white shadow-lg backdrop-blur-sm' 
-                          : message.role === 'system' 
-                            ? 'bg-white/80 backdrop-blur-lg text-gray-800 border border-quickfix-blue/20 shadow-lg' 
-                            : 'bg-white/80 backdrop-blur-lg text-gray-800 border border-gray-200/50 shadow-lg'
-                      }`}
-                    >
-                      <div className="whitespace-pre-wrap leading-relaxed">{message.content}</div>
-                      <div className={`text-xs mt-2 ${message.role === 'user' ? 'text-blue-200' : 'text-gray-500'}`}>
-                        {formatTime(message.timestamp)}
+            
+            <ScrollArea 
+              className="flex-grow bg-gradient-to-b from-white/30 to-white/20 backdrop-blur-sm"
+              ref={scrollAreaRef}
+            >
+              <div className="p-6 space-y-4">
+                {messages.map((message, index) => (
+                  <div 
+                    key={index}
+                    className={`flex transform transition-all duration-300 ease-out ${
+                      message.role === 'user' ? 'justify-end' : 'justify-start'
+                    }`}
+                    style={{
+                      animationDelay: `${index * 50}ms`,
+                      transform: 'translateY(0)',
+                      opacity: 1
+                    }}
+                  >
+                    <div className={`flex max-w-[80%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                      <Avatar className={`h-8 w-8 flex-shrink-0 ${message.role === 'user' ? 'ml-2' : 'mr-2'}`}>
+                        {message.role === 'user' ? (
+                          <>
+                            <AvatarFallback className="bg-quickfix-blue text-white font-semibold">U</AvatarFallback>
+                          </>
+                        ) : (
+                          <>
+                            <AvatarFallback className="bg-quickfix-blue text-white">
+                              <Bot className="h-4 w-4" />
+                            </AvatarFallback>
+                          </>
+                        )}
+                      </Avatar>
+                      
+                      <div 
+                        className={`rounded-3xl p-4 transition-all duration-200 hover:shadow-lg ${
+                          message.role === 'user' 
+                            ? 'bg-quickfix-blue text-white shadow-lg backdrop-blur-sm' 
+                            : message.role === 'system' 
+                              ? 'bg-white/80 backdrop-blur-lg text-gray-800 border border-quickfix-blue/20 shadow-lg' 
+                              : 'bg-white/80 backdrop-blur-lg text-gray-800 border border-gray-200/50 shadow-lg'
+                        }`}
+                      >
+                        <div className="whitespace-pre-wrap leading-relaxed">{message.content}</div>
+                        <div className={`text-xs mt-2 ${message.role === 'user' ? 'text-blue-200' : 'text-gray-500'}`}>
+                          {formatTime(message.timestamp)}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-              <div ref={messagesEndRef} />
-              
-              {loading && (
-                <div className="flex justify-start">
-                  <div className="flex max-w-[80%] flex-row">
-                    <Avatar className="h-8 w-8 mr-2">
-                      <AvatarFallback className="bg-quickfix-blue text-white">
-                        <Bot className="h-4 w-4" />
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="rounded-3xl p-4 bg-white/80 backdrop-blur-lg text-gray-800 border border-gray-200/50 shadow-lg">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 rounded-full bg-quickfix-blue animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                        <div className="w-2 h-2 rounded-full bg-quickfix-blue animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                        <div className="w-2 h-2 rounded-full bg-quickfix-blue animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                        <span className="text-sm text-gray-600 ml-2">QuickFix AI is thinking...</span>
+                ))}
+                
+                {loading && (
+                  <div className="flex justify-start animate-fade-in">
+                    <div className="flex max-w-[80%] flex-row">
+                      <Avatar className="h-8 w-8 mr-2 flex-shrink-0">
+                        <AvatarFallback className="bg-quickfix-blue text-white">
+                          <Bot className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="rounded-3xl p-4 bg-white/80 backdrop-blur-lg text-gray-800 border border-gray-200/50 shadow-lg">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 rounded-full bg-quickfix-blue animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                          <div className="w-2 h-2 rounded-full bg-quickfix-blue animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                          <div className="w-2 h-2 rounded-full bg-quickfix-blue animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                          <span className="text-sm text-gray-600 ml-2">QuickFix AI is thinking...</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+            </ScrollArea>
             
             <div className="border-t bg-white/40 backdrop-blur-lg rounded-b-lg">
               <AIInputWithLoading
