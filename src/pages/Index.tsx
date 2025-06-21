@@ -69,7 +69,7 @@ const Index: React.FC = () => {
             <AlertDialogHeader>
               <AlertDialogTitle>Register as a Referrer</AlertDialogTitle>
               <AlertDialogDescription>
-                Enter your details to register as a referrer. We’ll contact you on WhatsApp!
+                Enter your details to register as a referrer. We'll contact you on WhatsApp!
               </AlertDialogDescription>
             </AlertDialogHeader>
             <form
@@ -97,14 +97,9 @@ const Index: React.FC = () => {
                 value={refPhone}
                 onChange={e => setRefPhone(e.target.value)}
               />
-              <div className="flex gap-2">
-                <AlertDialogAction asChild>
-                  <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded">Register via WhatsApp</button>
-                </AlertDialogAction>
-                <button type="button" className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 rounded border" onClick={() => setShowReferralDialog(false)}>
-                  Wrong
-                </button>
-              </div>
+              <AlertDialogAction asChild>
+                <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded">Register via WhatsApp</button>
+              </AlertDialogAction>
             </form>
           </AlertDialogContent>
         </AlertDialog>
