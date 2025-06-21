@@ -9,6 +9,7 @@ import CTASection from '@/components/home/CTASection';
 import MechanicRepairSection from '@/components/home/MechanicRepairSection';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogAction } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { X } from 'lucide-react';
 
 const WHATSAPP_NUMBER = '919381904726';
 
@@ -65,7 +66,14 @@ const Index: React.FC = () => {
         </div>
         {/* Referral Dialog */}
         <AlertDialog open={showReferralDialog} onOpenChange={setShowReferralDialog}>
-          <AlertDialogContent className="max-w-md mx-auto">
+          <AlertDialogContent className="max-w-md mx-auto relative">
+            <button
+              onClick={() => setShowReferralDialog(false)}
+              className="absolute top-4 left-4 z-10 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </button>
             <AlertDialogHeader>
               <AlertDialogTitle>Register as a Referrer</AlertDialogTitle>
               <AlertDialogDescription>
