@@ -1,32 +1,46 @@
-
-import React, { useState, useEffect } from 'react';
-import { MapPin, Phone, Zap, Clock, Star, TrendingUp } from 'lucide-react';
+import React, { useState } from 'react';
+import { MapPin, Phone, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
+import { toast } from "sonner";
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { Textarea } from '@/components/ui/textarea';
 const locations = ["Hitech City", "Gachibowli", "Kukatpally", "Madhapur", "Jubilee Hills", "Banjara Hills", "Secunderabad", "Begumpet", "Ameerpet", "KPHB", "Shamshabad", "Kondapur"];
-
-const serviceStats = [
-  { icon: Zap, label: "Services Completed", value: "1,247", color: "text-green-500" },
-  { icon: Clock, label: "Avg Response Time", value: "23 min", color: "text-blue-500" },
-  { icon: Star, label: "Customer Rating", value: "4.8/5", color: "text-yellow-500" },
-  { icon: TrendingUp, label: "Growth Rate", value: "+34%", color: "text-purple-500" }
-];
-
 const ServiceAreas: React.FC = () => {
-  const [activeLocation, setActiveLocation] = useState<string | null>(null);
-  const [animatingStats, setAnimatingStats] = useState(false);
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [service, setService] = useState('');
+  const [location, setLocation] = useState('');
+  const [message, setMessage] = useState('');
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setAnimatingStats(true);
-      setTimeout(() => setAnimatingStats(false), 1000);
-    }, 3000);
+    // Format the WhatsApp message
+    const whatsappMessage = `*New Service Booking*%0A
+*Name:* ${name}%0A
+*Phone:* ${phone}%0A
+*Service:* ${service}%0A
+*Location:* ${location}%0A
+*Message:* ${message}`;
 
-    return () => clearInterval(interval);
-  }, []);
+    // Create WhatsApp URL with formatted message
+    const whatsappURL = `https://wa.me/919381904726?text=${whatsappMessage}`;
 
-  return (
-    <section className="py-16 bg-white">
+    // Open WhatsApp in a new tab
+    window.open(whatsappURL, '_blank');
+
+    // Show success message
+    toast.success("Booking request sent via WhatsApp");
+
+    // Reset form
+    setName('');
+    setPhone('');
+    setService('');
+    setLocation('');
+    setMessage('');
+  };
+  return <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -37,25 +51,10 @@ const ServiceAreas: React.FC = () => {
               </p>
               
               <div className="grid grid-cols-2 gap-x-8 gap-y-3">
-                {locations.map((locationName, index) => (
-                  <div 
-                    key={index} 
-                    className={`flex items-center cursor-pointer transition-all duration-300 p-2 rounded-lg hover:bg-quickfix-light-blue ${
-                      activeLocation === locationName ? 'bg-quickfix-light-blue scale-105' : ''
-                    }`}
-                    onMouseEnter={() => setActiveLocation(locationName)}
-                    onMouseLeave={() => setActiveLocation(null)}
-                  >
-                    <MapPin className={`h-5 w-5 mr-2 transition-all duration-300 ${
-                      activeLocation === locationName ? 'text-quickfix-blue animate-bounce' : 'text-quickfix-orange'
-                    }`} />
-                    <span className={`transition-all duration-300 ${
-                      activeLocation === locationName ? 'font-semibold text-quickfix-blue' : ''
-                    }`}>
-                      {locationName}
-                    </span>
-                  </div>
-                ))}
+                {locations.map((locationName, index) => <div key={index} className="flex items-center">
+                    <MapPin className="h-5 w-5 text-quickfix-orange mr-2" />
+                    <span>{locationName}</span>
+                  </div>)}
               </div>
               
               <div className="mt-8">
@@ -67,54 +66,43 @@ const ServiceAreas: React.FC = () => {
             </div>
             
             <div>
-              <div className="bg-gradient-to-br from-quickfix-light-blue to-white p-8 rounded-xl shadow-lg border border-gray-100">
-                <h3 className="text-2xl font-bold mb-6 text-center text-quickfix-blue">Live Service Stats</h3>
+              <div className="bg-quickfix-light-blue p-6 rounded-lg shadow-md\\nform ">
+                <h3 className="text-xl font-bold mb-4">Book via WhatsApp</h3>
+                <p className="text-gray-600 mb-4">Fill in the details below to quickly book a service through WhatsApp</p>
                 
-                <div className="grid grid-cols-2 gap-6 mb-8">
-                  {serviceStats.map((stat, index) => {
-                    const IconComponent = stat.icon;
-                    return (
-                      <div 
-                        key={index}
-                        className={`text-center p-4 bg-white rounded-lg shadow-sm transition-all duration-500 hover:shadow-md hover:scale-105 ${
-                          animatingStats ? 'animate-pulse' : ''
-                        }`}
-                      >
-                        <IconComponent className={`h-8 w-8 mx-auto mb-2 ${stat.color}`} />
-                        <div className="text-2xl font-bold text-gray-800 mb-1">{stat.value}</div>
-                        <div className="text-sm text-gray-600">{stat.label}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className="bg-white p-6 rounded-lg shadow-sm">
-                  <h4 className="text-lg font-semibold mb-4 text-center">Coverage Heat Map</h4>
-                  <div className="grid grid-cols-4 gap-2">
-                    {Array.from({ length: 16 }, (_, i) => (
-                      <div
-                        key={i}
-                        className={`h-8 rounded transition-all duration-1000 ${
-                          Math.random() > 0.3 
-                            ? 'bg-gradient-to-r from-quickfix-orange to-quickfix-blue opacity-70 hover:opacity-100' 
-                            : 'bg-gray-200 hover:bg-gray-300'
-                        }`}
-                        style={{
-                          animationDelay: `${i * 0.1}s`
-                        }}
-                      />
-                    ))}
+                <form onSubmit={handleSubmit}>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="name">Name</Label>
+                      <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Your Name" required />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="phone">Phone Number</Label>
+                      <Input id="phone" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Your Phone Number" required />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="service">Service Required</Label>
+                      <Input id="service" value={service} onChange={e => setService(e.target.value)} placeholder="What service do you need?" required />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="location">Your Location</Label>
+                      <Input id="location" value={location} onChange={e => setLocation(e.target.value)} placeholder="Your Area in Hyderabad" required />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="message">Additional Details (Optional)</Label>
+                      <Textarea id="message" value={message} onChange={e => setMessage(e.target.value)} placeholder="Any specific issues or requirements" className="resize-none" rows={3} />
+                    </div>
+                    
+                    <Button type="submit" className="w-full bg-quickfix-blue hover:bg-quickfix-blue/90 flex items-center justify-center">
+                      <Send className="mr-2 h-4 w-4" />
+                      Book via WhatsApp
+                    </Button>
                   </div>
-                  <p className="text-xs text-gray-500 mt-3 text-center">
-                    Real-time service density across Hyderabad
-                  </p>
-                </div>
-
-                <div className="mt-6 text-center">
-                  <Button className="bg-quickfix-blue hover:bg-quickfix-blue/90 text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
-                    Book Service Now
-                  </Button>
-                </div>
+                </form>
               </div>
             </div>
           </div>
@@ -123,14 +111,9 @@ const ServiceAreas: React.FC = () => {
           <div className="mt-16">
             <h3 className="text-2xl font-bold mb-6 text-center">Our Service Coverage in Hyderabad</h3>
             <div className="rounded-lg overflow-hidden shadow-lg border border-gray-200">
-              <div className="relative bg-muted aspect-video">
-                <img 
-                  src="/lovable-uploads/c9d4e9bb-b3ea-4595-9b75-1108b5f42367.png" 
-                  alt="QuickFix Service Areas in Hyderabad" 
-                  className="object-cover w-full h-full" 
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
-              </div>
+              <AspectRatio ratio={16 / 9} className="bg-muted">
+                <img src="/lovable-uploads/c9d4e9bb-b3ea-4595-9b75-1108b5f42367.png" alt="QuickFix Service Areas in Hyderabad" className="object-cover w-full h-full" />
+              </AspectRatio>
             </div>
             <p className="text-center text-gray-500 mt-4">
               We provide service across all highlighted areas in Hyderabad
@@ -138,8 +121,6 @@ const ServiceAreas: React.FC = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default ServiceAreas;
