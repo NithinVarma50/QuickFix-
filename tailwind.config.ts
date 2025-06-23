@@ -93,13 +93,18 @@ export default {
 				'slide-right': {
 					'0%': { transform: 'translateX(-10px)', opacity: '0' },
 					'100%': { transform: 'translateX(0)', opacity: '1' }
+				},
+				'grid': {
+					'0%': { transform: 'translateY(-50%)' },
+					'100%': { transform: 'translateY(0)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'pulse-light': 'pulse-light 2s ease-in-out infinite',
-				'slide-right': 'slide-right 0.5s ease-out'
+				'slide-right': 'slide-right 0.5s ease-out',
+				'grid': 'grid 15s linear infinite'
 			},
 			fontFamily: {
 				sans: ['Inter', 'sans-serif'],
