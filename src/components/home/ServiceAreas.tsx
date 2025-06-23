@@ -2,15 +2,13 @@
 import React from 'react';
 import { MapPin, Phone } from 'lucide-react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { RetroGrid } from '@/components/ui/retro-grid';
 
 const locations = ["Hitech City", "Gachibowli", "Kukatpally", "Madhapur", "Jubilee Hills", "Banjara Hills", "Secunderabad", "Begumpet", "Ameerpet", "KPHB", "Shamshabad", "Kondapur"];
 
 const ServiceAreas: React.FC = () => {
   return (
-    <section className="py-16 bg-white relative overflow-hidden">
-      <RetroGrid />
-      <div className="container mx-auto px-4 relative z-10">
+    <section className="py-16 bg-white">
+      <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
