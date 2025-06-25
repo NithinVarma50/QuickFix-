@@ -81,7 +81,7 @@ const AboutPage: React.FC = () => {
               </p>
             </div>
             
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-4 gap-8">
               <div className="bg-white p-6 rounded-lg shadow-md">
                 <h3 className="text-xl font-semibold mb-2">Saiteja</h3>
                 <h4 className="text-quickfix-orange font-medium mb-3">Founder & CEO</h4>
@@ -95,7 +95,6 @@ const AboutPage: React.FC = () => {
                   Focused on building a trusted, scalable brand for doorstep vehicle repair.
                 </p>
               </div>
-              
               <div className="bg-white p-6 rounded-lg shadow-md">
                 <h3 className="text-xl font-semibold mb-2">Karthik</h3>
                 <h4 className="text-quickfix-orange font-medium mb-3">Co-Founder & Operations Lead</h4>
@@ -106,7 +105,6 @@ const AboutPage: React.FC = () => {
                   Ensures smooth service flow and customer satisfaction at every touchpoint. The backbone of execution and day-to-day hustle.
                 </p>
               </div>
-              
               <div className="bg-white p-6 rounded-lg shadow-md">
                 <h3 className="text-xl font-semibold mb-2">Nithin Varma</h3>
                 <h4 className="text-quickfix-orange font-medium mb-3">Co-Founder, COO & Tech Architect</h4>
@@ -118,6 +116,19 @@ const AboutPage: React.FC = () => {
                 </p>
                 <p className="text-gray-600">
                   Drives AI integration, platform development, and long-term scaling through smart logistics and dark store infrastructure.
+                </p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="text-xl font-semibold mb-2">Philip</h3>
+                <h4 className="text-quickfix-orange font-medium mb-3">Research & Development Associate</h4>
+                <p className="text-gray-600 mb-3">
+                  Focuses on refining QuickFix through real-world logic and user perspective.
+                </p>
+                <p className="text-gray-600 mb-3">
+                  Actively reviews systems, services, and new ideas to find flaws and improve them.
+                </p>
+                <p className="text-gray-600">
+                  Plays a key role in shaping future features, campaigns, and growth directions.
                 </p>
               </div>
             </div>
