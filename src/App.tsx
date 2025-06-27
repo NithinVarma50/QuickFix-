@@ -41,37 +41,11 @@ const App = () => {
   // Hide FloatingChatbot on /chat route
   const isChatPage = window.location.pathname === '/chat';
 
-  // Fallback overlay logic
+
+  // Remove any fallback overlay if present (in case of hot reload or previous error)
   useEffect(() => {
-    // Create fallback overlay
-    const fallback = document.createElement('div');
-    fallback.id = 'global-fallback-overlay';
-    fallback.style.position = 'fixed';
-    fallback.style.top = '0';
-    fallback.style.left = '0';
-    fallback.style.width = '100vw';
-    fallback.style.height = '100vh';
-    fallback.style.background = 'white';
-    fallback.style.zIndex = '99999';
-    fallback.style.display = 'flex';
-    fallback.style.flexDirection = 'column';
-    fallback.style.alignItems = 'center';
-    fallback.style.justifyContent = 'center';
-    fallback.innerHTML = `
-      <div style="font-size:2rem;color:#2563eb;font-weight:bold;margin-bottom:1rem;">QuickFix is waking up...</div>
-      <div style="margin-bottom:1rem;">
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="animate-spin">
-          <circle cx="24" cy="24" r="20" stroke="#2563eb" stroke-width="4" stroke-dasharray="31.4 31.4"/>
-        </svg>
-      </div>
-      <div style="color:#666;">If this stays blank, check your internet connection or open the browser console for errors.<br/>Try refreshing the page.</div>
-    `;
-    document.body.appendChild(fallback);
-    // Remove fallback after React mounts
-    return () => {
-      const el = document.getElementById('global-fallback-overlay');
-      if (el) el.remove();
-    };
+    const el = document.getElementById('global-fallback-overlay');
+    if (el) el.remove();
   }, []);
 
   return (
