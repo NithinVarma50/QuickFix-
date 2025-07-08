@@ -17,6 +17,20 @@ serve(async (req) => {
     const { messages } = await req.json();
     console.log('Received messages:', messages);
 
+    // Check if GEMINI_API_KEY is available
+    const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
+    
+    if (!geminiApiKey) {
+      console.error('GEMINI_API_KEY not found in environment variables');
+      return new Response(JSON.stringify({ 
+        error: "API configuration missing",
+        content: "I'm sorry, but the AI service is not properly configured right now. Please try booking a QuickFix mechanic directly for immediate assistance! 🔧\n\nOur team can help diagnose and fix your vehicle issues professionally."
+      }), {
+        status: 200, // Return 200 to avoid client-side errors
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     // Last message is the user's current query
     const userQuery = messages[messages.length - 1].content;
     console.log('Current user query:', userQuery);
@@ -90,16 +104,6 @@ Always end responses encouraging QuickFix booking for complex or safety-critical
 
 ${conversationContext}User Query: ${userQuery}`;
 
-    const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
-    
-    if (!geminiApiKey) {
-      console.error('GEMINI_API_KEY not found');
-      return new Response(JSON.stringify({ error: "API key not configured" }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-
     console.log('Making request to Gemini API...');
     
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
@@ -127,8 +131,11 @@ ${conversationContext}User Query: ${userQuery}`;
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Gemini API error:', errorText);
-      return new Response(JSON.stringify({ error: "Failed to get AI response" }), {
-        status: 500,
+      return new Response(JSON.stringify({ 
+        error: "AI service unavailable",
+        content: "I'm experiencing some technical difficulties right now. 😔\n\nBut don't worry! You can still get expert help by booking a QuickFix mechanic directly. Our professional team is ready to diagnose and fix your vehicle issues! 🔧"
+      }), {
+        status: 200, // Return 200 to avoid client-side errors
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -138,8 +145,11 @@ ${conversationContext}User Query: ${userQuery}`;
     
     if (!data.candidates || data.candidates.length === 0) {
       console.error('No candidates in response:', data);
-      return new Response(JSON.stringify({ error: "No response generated from AI" }), {
-        status: 500,
+      return new Response(JSON.stringify({ 
+        error: "No AI response generated",
+        content: "I'm having trouble generating a response right now. 🤔\n\nFor immediate help with your vehicle issue, I recommend booking a QuickFix mechanic who can provide professional diagnosis and repair! 🔧"
+      }), {
+        status: 200, // Return 200 to avoid client-side errors
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -162,9 +172,9 @@ ${conversationContext}User Query: ${userQuery}`;
     console.error('Error processing request:', error);
     return new Response(JSON.stringify({ 
       error: "Internal server error",
-      details: error.message 
+      content: "Something went wrong on my end! 😅\n\nBut I have a great solution - book a QuickFix mechanic for professional vehicle diagnosis and repair. Our team is ready to help you get back on the road! 🚗🔧"
     }), {
-      status: 500,
+      status: 200, // Return 200 to avoid client-side errors
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }

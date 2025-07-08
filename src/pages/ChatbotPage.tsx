@@ -110,25 +110,40 @@ const ChatbotPage: React.FC = () => {
       });
       
       if (error) {
-        throw error;
+        console.error('Supabase function error:', error);
+        throw new Error(error.message || 'Failed to get AI response');
       }
       
-      // Add AI response to chat
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: data.content,
-        timestamp: new Date(),
-      }]);
+      // Check if the response contains an error but still has content (graceful degradation)
+      if (data?.error && data?.content) {
+        console.log('AI service degraded, using fallback response');
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: data.content,
+          timestamp: new Date(),
+        }]);
+      } else if (data?.content) {
+        // Add AI response to chat
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: data.content,
+          timestamp: new Date(),
+        }]);
+      } else {
+        throw new Error('No content received from AI');
+      }
     } catch (error: any) {
-      console.error(error);
-      toast.error("Error communicating with QuickFix AI", {
-        description: error.message || "Please try again later",
+      console.error('Chat error:', error);
+      
+      // Show user-friendly toast
+      toast.error("Having trouble connecting to QuickFix AI", {
+        description: "But you can still book a mechanic for professional help!",
       });
       
-      // Add error message to chat
+      // Add helpful fallback message to chat
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: "I'm sorry, I encountered a problem processing your request. Please try again later, or feel free to book a mechanic directly! 🔧",
+        content: "I'm having some technical difficulties right now, but don't worry! 😊\n\nYou can still get expert help by booking a QuickFix mechanic directly. Our professional team is ready to diagnose and fix your vehicle issues quickly and efficiently! 🔧\n\nJust click the 'Book Service' button below to get started.",
         timestamp: new Date(),
       }]);
     } finally {
