@@ -17,20 +17,6 @@ serve(async (req) => {
     const { messages } = await req.json();
     console.log('Received messages:', messages);
 
-    // Check if GEMINI_API_KEY is available
-    const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
-    
-    if (!geminiApiKey) {
-      console.error('GEMINI_API_KEY not found in environment variables');
-      return new Response(JSON.stringify({ 
-        error: "API configuration missing",
-        content: "I'm sorry, but the AI service is not properly configured right now. Please try booking a QuickFix mechanic directly for immediate assistance! 🔧\n\nOur team can help diagnose and fix your vehicle issues professionally."
-      }), {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-
     // Last message is the user's current query
     const userQuery = messages[messages.length - 1].content;
     console.log('Current user query:', userQuery);
@@ -48,7 +34,7 @@ serve(async (req) => {
     }
 
     // Enhanced system prompt with QuickFix training and context
-    const systemPrompt = `You are QuickFix AI, a friendly, knowledgeable, and easy-to-understand diagnostic assistant built into the official QuickFix booking website.
+    const systemPrompt = `You are QuickFix AI, a friendly, knowledgeable, and easy-to-understand diagnostic assistant built into the official QuickFix booking website (https://quic-fix.vercel.app).
 
 **CORE IDENTITY & MISSION:**
 You are a smart diagnostic assistant that helps users understand possible issues with their vehicle (bike or car) based on problems they describe in simple language. Your primary role is to provide guidance and encourage users to book QuickFix service for professional help when needed.
@@ -104,8 +90,17 @@ Always end responses encouraging QuickFix booking for complex or safety-critical
 
 ${conversationContext}User Query: ${userQuery}`;
 
+    const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
+    
+    if (!geminiApiKey) {
+      console.error('GEMINI_API_KEY not found');
+      return new Response(JSON.stringify({ error: "API key not configured" }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     console.log('Making request to Gemini API...');
-    console.log('Using API key:', geminiApiKey ? 'Present' : 'Missing');
     
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
@@ -123,25 +118,7 @@ ${conversationContext}User Query: ${userQuery}`;
           topK: 32,
           topP: 0.95,
           maxOutputTokens: 512,
-        },
-        safetySettings: [
-          {
-            category: "HARM_CATEGORY_HARASSMENT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_HATE_SPEECH", 
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          }
-        ]
+        }
       }),
     });
 
@@ -149,15 +126,9 @@ ${conversationContext}User Query: ${userQuery}`;
     
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Gemini API error response:', errorText);
-      console.error('Response status:', response.status);
-      console.error('Response headers:', Object.fromEntries(response.headers.entries()));
-      
-      return new Response(JSON.stringify({ 
-        error: "AI service unavailable",
-        content: "I'm experiencing some technical difficulties right now. 😔\n\nBut don't worry! You can still get expert help by booking a QuickFix mechanic directly. Our professional team is ready to diagnose and fix your vehicle issues! 🔧"
-      }), {
-        status: 200,
+      console.error('Gemini API error:', errorText);
+      return new Response(JSON.stringify({ error: "Failed to get AI response" }), {
+        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -167,33 +138,19 @@ ${conversationContext}User Query: ${userQuery}`;
     
     if (!data.candidates || data.candidates.length === 0) {
       console.error('No candidates in response:', data);
-      return new Response(JSON.stringify({ 
-        error: "No AI response generated",
-        content: "I'm having trouble generating a response right now. 🤔\n\nFor immediate help with your vehicle issue, I recommend booking a QuickFix mechanic who can provide professional diagnosis and repair! 🔧"
-      }), {
-        status: 200,
+      return new Response(JSON.stringify({ error: "No response generated from AI" }), {
+        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
     
-    const generatedText = data.candidates[0]?.content?.parts?.[0]?.text;
-    
-    if (!generatedText) {
-      console.error('No text content in response:', data);
-      return new Response(JSON.stringify({ 
-        error: "Invalid AI response format",
-        content: "I'm having trouble processing your request right now. 🤔\n\nFor immediate help with your vehicle issue, I recommend booking a QuickFix mechanic who can provide professional diagnosis and repair! 🔧"
-      }), {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-    
+    const generatedText = data.candidates[0].content.parts[0].text;
     console.log('Generated text:', generatedText);
 
     // Clean and format the response while preserving structure
     const cleanResponse = generatedText
       .replace(/\*\*(.*?)\*\*/g, '**$1**') // Keep bold formatting for headings
+      .replace(/[\u{1F600}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '') // Remove most emojis except the ones we want
       .replace(/^\s*[\-\*]\s*/gm, '• ') // Convert bullet points to consistent format
       .replace(/\n{3,}/g, '\n\n') // Limit consecutive line breaks
       .trim();
@@ -203,13 +160,11 @@ ${conversationContext}User Query: ${userQuery}`;
     });
   } catch (error) {
     console.error('Error processing request:', error);
-    console.error('Error stack:', error.stack);
-    
     return new Response(JSON.stringify({ 
       error: "Internal server error",
-      content: "Something went wrong on my end! 😅\n\nBut I have a great solution - book a QuickFix mechanic for professional vehicle diagnosis and repair. Our team is ready to help you get back on the road! 🚗🔧"
+      details: error.message 
     }), {
-      status: 200,
+      status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
