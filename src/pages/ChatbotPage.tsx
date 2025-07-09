@@ -152,79 +152,6 @@ const ChatbotPage: React.FC = () => {
     toast.success("Chat history cleared!");
   };
 
-  // Format AI response content with enhanced styling
-  const formatAIResponse = (content: string) => {
-    // Split content into lines and process each line
-    const lines = content.split('\n');
-    const formattedLines = lines.map((line, index) => {
-      // Check if line contains emoji headings (🔍, 🚗, 🔧, etc.)
-      const emojiHeadingPattern = /^(🔍|🚗|🔧|👀|⚠️|💰|🚨|📞|💡)\s*\*\*(.*?)\*\*:?\s*(.*)/;
-      const match = line.match(emojiHeadingPattern);
-      
-      if (match) {
-        const [, emoji, heading, content] = match;
-        return (
-          <div key={index} className="mb-3">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-lg">{emoji}</span>
-              <span className="font-bold text-gray-800 text-sm uppercase tracking-wide">
-                {heading}
-              </span>
-            </div>
-            {content && (
-              <div className="ml-7 text-gray-700 text-sm leading-relaxed">
-                {content}
-              </div>
-            )}
-          </div>
-        );
-      }
-      
-      // Handle regular bold text
-      if (line.includes('**')) {
-        const boldPattern = /\*\*(.*?)\*\*/g;
-        const parts = line.split(boldPattern);
-        return (
-          <div key={index} className="mb-2">
-            {parts.map((part, partIndex) => 
-              partIndex % 2 === 1 ? (
-                <span key={partIndex} className="font-semibold text-gray-800">
-                  {part}
-                </span>
-              ) : (
-                <span key={partIndex} className="text-gray-700">
-                  {part}
-                </span>
-              )
-            )}
-          </div>
-        );
-      }
-      
-      // Handle bullet points
-      if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
-        return (
-          <div key={index} className="ml-4 mb-1 text-gray-700 text-sm">
-            {line.trim()}
-          </div>
-        );
-      }
-      
-      // Regular text
-      if (line.trim()) {
-        return (
-          <div key={index} className="mb-2 text-gray-700 text-sm leading-relaxed">
-            {line}
-          </div>
-        );
-      }
-      
-      return null;
-    }).filter(Boolean);
-    
-    return <div className="space-y-1">{formattedLines}</div>;
-  };
-
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-quickfix-light-blue/20 to-white">
       <Navbar />
@@ -298,12 +225,7 @@ const ChatbotPage: React.FC = () => {
                               : 'bg-white/80 backdrop-blur-lg text-gray-800 border border-gray-200/50 shadow-lg'
                         }`}
                       >
-                        <div className="leading-relaxed">
-                          {message.role === 'assistant' ? 
-                            formatAIResponse(message.content) : 
-                            <div className="whitespace-pre-wrap">{message.content}</div>
-                          }
-                        </div>
+                        <div className="whitespace-pre-wrap leading-relaxed">{message.content}</div>
                         <div className={`text-xs mt-2 ${message.role === 'user' ? 'text-blue-200' : 'text-gray-500'}`}>
                           {formatTime(message.timestamp)}
                         </div>
