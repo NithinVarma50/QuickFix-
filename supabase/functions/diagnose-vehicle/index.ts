@@ -116,12 +116,10 @@ ${conversationContext}User Query: ${userQuery}`;
 
     // Supabase Edge Functions run on Deno. This will error in Node.js, but is correct for deployment.
     // To avoid TypeScript errors locally, add a type guard for Deno.
-    let geminiApiKey: string | undefined = undefined;
-    if (typeof Deno !== 'undefined' && Deno.env && typeof Deno.env.get === 'function') {
-      geminiApiKey = Deno.env.get('GEMINI_API_KEY');
-    }
+    // Hardcoded Gemini API key for testing (remove for production!)
+    const geminiApiKey = "AIzaSyD7uvy_svG16oij9ZFEzwBNgnINPwuxGHA";
     if (!geminiApiKey) {
-      const errMsg = 'GEMINI_API_KEY not found in environment variables.';
+      const errMsg = 'GEMINI_API_KEY not set.';
       console.error(errMsg);
       return new Response(JSON.stringify({ error: errMsg }), {
         status: 500,

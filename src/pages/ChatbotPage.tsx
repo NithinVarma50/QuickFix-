@@ -96,12 +96,21 @@ const ChatbotPage: React.FC = () => {
     setLoading(true);
     
     try {
+
       // Get conversation history (excluding system message, last 10 exchanges)
-      const conversationHistory = messages
+      let conversationHistory = messages
         .filter(m => m.role !== 'system')
         .slice(-20) // Last 20 messages (10 user + 10 AI responses)
         .concat([userMessage]);
-      
+
+      // Defensive: ensure conversationHistory is always a non-empty array
+      if (!Array.isArray(conversationHistory) || conversationHistory.length === 0) {
+        conversationHistory = [userMessage];
+      }
+
+      // Log outgoing payload for debugging
+      console.log('Sending to edge function:', conversationHistory);
+
       // Call the edge function with conversation history
       const { data, error } = await supabase.functions.invoke('diagnose-vehicle', {
         body: {
