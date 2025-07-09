@@ -21,17 +21,34 @@ serve(async (req) => {
   try {
     // Add a unique request ID for easier tracking
     const requestId = Math.random().toString(36).substring(2, 10) + Date.now();
-    const { messages } = await req.json();
+    let messages: any[] = [];
+    try {
+      const body = await req.json();
+      if (!body || !Array.isArray(body.messages)) {
+        throw new Error('Invalid request: messages array missing');
+      }
+      messages = body.messages;
+    } catch (parseErr) {
+      const errMsg = `[${requestId}] Invalid JSON or missing messages: ${parseErr}`;
+      console.error(errMsg);
+      return new Response(JSON.stringify({ error: errMsg, requestId }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
     console.log(`[${requestId}] Received messages:`, messages);
 
-    // Last message is the user's current query
-    const userQuery = messages[messages.length - 1]?.content || '';
+    // Limit conversation history to last 10 (5 user + 5 assistant)
+    const filteredMessages = messages.filter((m) => m.role === 'user' || m.role === 'assistant');
+    const limitedMessages = filteredMessages.slice(-10);
+    const userMessage = limitedMessages[limitedMessages.length - 1];
+    const userQuery = userMessage?.content || '';
     console.log(`[${requestId}] Current user query:`, userQuery);
 
     // Build conversation context from previous messages
     let conversationContext = '';
-    if (messages.length > 1) {
-      const previousMessages = messages.slice(0, -1);
+    if (limitedMessages.length > 1) {
+      const previousMessages = limitedMessages.slice(0, -1);
       conversationContext = '\n\nPrevious conversation context:\n';
       previousMessages.forEach((msg: any, index: number) => {
         const role = msg.role === 'user' ? 'User' : 'Assistant';
@@ -115,30 +132,48 @@ ${conversationContext}User Query: ${userQuery}`;
     console.log(`[${requestId}] Making request to Gemini API...`);
     let data;
     let response;
+    // Timeout Gemini API after 15 seconds
+    const fetchWithTimeout = (url: string, options: any, timeout = 15000) => {
+      return Promise.race([
+        fetch(url, options),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Gemini API timeout')), timeout))
+      ]);
+    };
     try {
-      response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      response = await fetchWithTimeout(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: systemPrompt
+              }]
+            }],
+            generationConfig: {
+              temperature: 0.3,
+              topK: 32,
+              topP: 0.95,
+              maxOutputTokens: 512,
+            }
+          }),
         },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: systemPrompt
-            }]
-          }],
-          generationConfig: {
-            temperature: 0.3,
-            topK: 32,
-            topP: 0.95,
-            maxOutputTokens: 512,
-          }
-        }),
-      });
+        15000
+      );
+      if (!(response && typeof response === 'object' && 'ok' in response)) {
+        throw new Error('No response from Gemini API');
+      }
       console.log(`[${requestId}] Gemini API response status:`, response.status);
       if (!response.ok) {
         const errorText = await response.text();
-        const errMsg = `[${requestId}] Gemini API error: ${errorText}`;
+        let userFriendly = 'Unknown error.';
+        if (errorText.includes('quota')) userFriendly = 'Gemini API quota exceeded.';
+        if (errorText.includes('rate limit')) userFriendly = 'Gemini API rate limit reached.';
+        if (errorText.includes('API key')) userFriendly = 'Gemini API key invalid or missing.';
+        const errMsg = `[${requestId}] Gemini API error: ${userFriendly} (raw: ${errorText})`;
         console.error(errMsg);
         return new Response(JSON.stringify({ error: errMsg, requestId }), {
           status: 500,
