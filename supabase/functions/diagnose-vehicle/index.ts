@@ -1,5 +1,10 @@
+// TypeScript: declare Deno for local dev to avoid errors. Safe for Supabase Edge Functions.
+declare const Deno: {
+  env: { get: (key: string) => string | undefined }
+};
 
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
+// @ts-ignore: This import works on Supabase Edge Functions (Deno), but not in Node.js/VSCode
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -90,11 +95,16 @@ Always end responses encouraging QuickFix booking for complex or safety-critical
 
 ${conversationContext}User Query: ${userQuery}`;
 
-    const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
-    
+    // Supabase Edge Functions run on Deno. This will error in Node.js, but is correct for deployment.
+    // To avoid TypeScript errors locally, add a type guard for Deno.
+    let geminiApiKey: string | undefined = undefined;
+    if (typeof Deno !== 'undefined' && Deno.env && typeof Deno.env.get === 'function') {
+      geminiApiKey = Deno.env.get('GEMINI_API_KEY');
+    }
     if (!geminiApiKey) {
-      console.error('GEMINI_API_KEY not found');
-      return new Response(JSON.stringify({ error: "API key not configured" }), {
+      const errMsg = 'GEMINI_API_KEY not found in environment variables.';
+      console.error(errMsg);
+      return new Response(JSON.stringify({ error: errMsg }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -126,8 +136,9 @@ ${conversationContext}User Query: ${userQuery}`;
     
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Gemini API error:', errorText);
-      return new Response(JSON.stringify({ error: "Failed to get AI response" }), {
+      const errMsg = `Gemini API error: ${errorText}`;
+      console.error(errMsg);
+      return new Response(JSON.stringify({ error: errMsg }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -137,8 +148,9 @@ ${conversationContext}User Query: ${userQuery}`;
     console.log('Gemini API response data:', JSON.stringify(data, null, 2));
     
     if (!data.candidates || data.candidates.length === 0) {
-      console.error('No candidates in response:', data);
-      return new Response(JSON.stringify({ error: "No response generated from AI" }), {
+      const errMsg = `No candidates in Gemini API response: ${JSON.stringify(data)}`;
+      console.error(errMsg);
+      return new Response(JSON.stringify({ error: errMsg }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -159,10 +171,15 @@ ${conversationContext}User Query: ${userQuery}`;
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (error) {
-    console.error('Error processing request:', error);
+    let errMsg = 'Error processing request: ';
+    if (error instanceof Error) {
+      errMsg += error.message;
+    } else {
+      errMsg += JSON.stringify(error);
+    }
+    console.error(errMsg);
     return new Response(JSON.stringify({ 
-      error: "Internal server error",
-      details: error.message 
+      error: errMsg
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
