@@ -19,12 +19,14 @@ serve(async (req) => {
   }
 
   try {
+    // Add a unique request ID for easier tracking
+    const requestId = Math.random().toString(36).substring(2, 10) + Date.now();
     const { messages } = await req.json();
-    console.log('Received messages:', messages);
+    console.log(`[${requestId}] Received messages:`, messages);
 
     // Last message is the user's current query
-    const userQuery = messages[messages.length - 1].content;
-    console.log('Current user query:', userQuery);
+    const userQuery = messages[messages.length - 1]?.content || '';
+    console.log(`[${requestId}] Current user query:`, userQuery);
 
     // Build conversation context from previous messages
     let conversationContext = '';
@@ -110,54 +112,60 @@ ${conversationContext}User Query: ${userQuery}`;
       });
     }
 
-    console.log('Making request to Gemini API...');
-    
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: systemPrompt
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.3,
-          topK: 32,
-          topP: 0.95,
-          maxOutputTokens: 512,
-        }
-      }),
-    });
-
-    console.log('Gemini API response status:', response.status);
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      const errMsg = `Gemini API error: ${errorText}`;
+    console.log(`[${requestId}] Making request to Gemini API...`);
+    let data;
+    let response;
+    try {
+      response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: systemPrompt
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.3,
+            topK: 32,
+            topP: 0.95,
+            maxOutputTokens: 512,
+          }
+        }),
+      });
+      console.log(`[${requestId}] Gemini API response status:`, response.status);
+      if (!response.ok) {
+        const errorText = await response.text();
+        const errMsg = `[${requestId}] Gemini API error: ${errorText}`;
+        console.error(errMsg);
+        return new Response(JSON.stringify({ error: errMsg, requestId }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+      data = await response.json();
+      console.log(`[${requestId}] Gemini API response data:`, JSON.stringify(data, null, 2));
+    } catch (apiError) {
+      const errMsg = `[${requestId}] Gemini API fetch failed: ${apiError}`;
       console.error(errMsg);
-      return new Response(JSON.stringify({ error: errMsg }), {
+      return new Response(JSON.stringify({ error: errMsg, requestId }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
-    const data = await response.json();
-    console.log('Gemini API response data:', JSON.stringify(data, null, 2));
-    
-    if (!data.candidates || data.candidates.length === 0) {
-      const errMsg = `No candidates in Gemini API response: ${JSON.stringify(data)}`;
+    if (!data || !data.candidates || !Array.isArray(data.candidates) || data.candidates.length === 0 || !data.candidates[0].content?.parts?.[0]?.text) {
+      const errMsg = `[${requestId}] No valid candidates in Gemini API response: ${JSON.stringify(data)}`;
       console.error(errMsg);
-      return new Response(JSON.stringify({ error: errMsg }), {
+      return new Response(JSON.stringify({ error: errMsg, requestId }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
-    
     const generatedText = data.candidates[0].content.parts[0].text;
-    console.log('Generated text:', generatedText);
+    console.log(`[${requestId}] Generated text:`, generatedText);
 
     // Clean and format the response while preserving structure
     const cleanResponse = generatedText
