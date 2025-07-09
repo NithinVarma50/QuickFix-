@@ -57,7 +57,7 @@ serve(async (req) => {
 ⚠️ **Safety:** [Any warnings if needed]
 💰 **Cost:** ₹[range] for typical repair
 🚨 **Priority:** Low/Medium/High
-📞 **Next Step:** [Recommend QuickFix service if needed: https://quic-fix.vercel.app]
+📞 **Next Step:** [If professional help needed, say "Book a QuickFix service from the booking page" instead of providing links]
 
 🎯 STYLE:
 - Be conversational but concise
@@ -71,7 +71,7 @@ serve(async (req) => {
 
 ${conversationContext}User Query: ${userQuery}
 
-Remember: Keep it SHORT and ORGANIZED. Use the format above based on whether you're asking questions or providing diagnosis.`;
+Remember: Keep it SHORT and ORGANIZED. Use the format above based on whether you're asking questions or providing diagnosis. When recommending professional help, guide users to the booking page rather than external links.`;
 
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
     
@@ -140,7 +140,7 @@ Remember: Keep it SHORT and ORGANIZED. Use the format above based on whether you
     if (!data.candidates || data.candidates.length === 0 || !data.candidates[0].content) {
       console.error('No valid response from Gemini:', data);
       
-      const fallbackMessage = "I'm having trouble right now. 😔\n\nFor immediate help, book a QuickFix mechanic at https://quic-fix.vercel.app";
+      const fallbackMessage = "I'm having trouble right now. 😔\n\nFor immediate help, visit our booking page to schedule a QuickFix mechanic.";
       
       return new Response(JSON.stringify({ content: fallbackMessage }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -163,7 +163,7 @@ Remember: Keep it SHORT and ORGANIZED. Use the format above based on whether you
   } catch (error) {
     console.error('Error processing request:', error);
     
-    const errorMessage = "Technical issue occurred. 😔\n\nBook a QuickFix mechanic at https://quic-fix.vercel.app for immediate help! 🔧";
+    const errorMessage = "Technical issue occurred. 😔\n\nVisit our booking page to schedule a QuickFix mechanic for immediate help! 🔧";
     
     return new Response(JSON.stringify({ content: errorMessage }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
