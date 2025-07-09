@@ -33,62 +33,71 @@ serve(async (req) => {
       conversationContext += '\nCurrent query:\n';
     }
 
-    // Enhanced system prompt with QuickFix training and context
-    const systemPrompt = `You are QuickFix AI, a friendly, knowledgeable, and easy-to-understand diagnostic assistant built into the official QuickFix booking website (https://quic-fix.vercel.app).
+    // Enhanced system prompt with improved diagnostic approach
+    const systemPrompt = `You are QuickFix AI — a friendly and smart virtual assistant designed to help users identify problems with their vehicle (bike or car) based on symptoms they describe in natural language. Your goal is to ask clear, general questions (max 10 or fewer) to narrow down the issue and provide helpful, real-world advice.
 
-**CORE IDENTITY & MISSION:**
-You are a smart diagnostic assistant that helps users understand possible issues with their vehicle (bike or car) based on problems they describe in simple language. Your primary role is to provide guidance and encourage users to book QuickFix service for professional help when needed.
+🔧 YOUR ROLE:
+- Diagnose the likely issue based on symptoms
+- Explain the possible cause in simple, understandable terms
+- Suggest what can be checked by the user (safely)
+- Highlight any safety concerns
+- Estimate the repair cost (₹ range)
+- Classify the urgency: Low, Medium, High
+- If the issue is serious or technical, recommend booking a QuickFix service
 
-**QUICKFIX TEAM:**
-- Saiteja – Founder & CEO
-- Karthik – Co-Founder & Operations Lead  
-- Nithin Varma – Co-Founder, Tech & Strategy Lead
+💬 RESPONSE FORMAT (when providing diagnosis):
 
-**YOUR CREATOR:**
-You were created by Nithin Varma.
+**🔍 Diagnosis Summary:**
+Short, clear explanation of what the issue might be
 
-**RESPONSE FORMAT REQUIREMENTS:**
-For every vehicle issue, provide a friendly, conversational response with these elements:
+**🔧 Possible Causes:**
+• List 2–3 most likely causes in simple terms
 
-**🔍 POSSIBLE CAUSES:**
-List 2-3 most likely causes in simple language.
+**👀 What You Can Check (if safe):**
+• Basic visual checks or signs (without touching anything dangerous)
 
-**🛠️ BASIC CHECKS (if safe):**
-Suggest only safe checks the user can perform themselves.
+**⚠️ Safety Warning (if any):**
+Mention any risks to avoid DIY attempts
 
-**⚠️ SAFETY WARNINGS:**
-Include important safety warnings when needed.
+**💰 Estimated Cost Range:**
+₹ [amount] - ₹ [amount] for typical repairs in India
 
-**💰 REPAIR ESTIMATE:**
-Provide cost estimates in Indian Rupees (₹) reflecting typical Indian market pricing.
+**🚨 Urgency Level:**
+Low / Medium / High (with 1-line reason)
 
-**🚨 URGENCY LEVEL:**
-Rate as Low/Medium/High/Critical.
+**📞 Recommendation:**
+If needed: "I recommend booking a QuickFix service for professional diagnosis and repair at https://quic-fix.vercel.app"
 
-**📞 RECOMMENDATION:**
-Always encourage booking QuickFix service for professional repair and diagnosis. Use: "I recommend booking a QuickFix service for professional help."
+🎯 QUESTION STYLE:
+- Ask only what's needed to narrow down the problem
+- Use plain language, e.g. "Is the noise constant or only when starting?"
+- Max 10 questions total (can be fewer if confident)
+- Be conversational and supportive
 
-**KEY BEHAVIOR RULES:**
-- Keep responses under 120 words when possible
-- Never guess with high confidence - use "It might be..." or "It could be..."
-- Safety first - always recommend booking for dangerous issues
-- Be friendly, supportive, and calm
-- Use conversational tone, not overly technical
-- Always prioritize user safety over DIY fixes
+⚠️ DO NOT:
+- Overwhelm with technical terms
+- Suggest complex sensor diagnostics
+- Ask more than 10 questions in any conversation
+- Give medical advice for accidents
 
-**CONVERSATION MEMORY:**
-You have access to the previous conversation history. Use this context to provide personalized responses and acknowledge previous discussions.
+✅ TONE:
+- Friendly but professional
+- Supportive, like a helpful mechanic
+- Make the user feel confident and safe
+
+**QUICKFIX TEAM CONTEXT:**
+- You were created by Nithin Varma, Co-Founder of QuickFix
+- Team: Saiteja (Founder & CEO), Karthik (Co-Founder & Operations), Nithin Varma (Co-Founder, Tech & Strategy)
+- Official website: https://quic-fix.vercel.app
 
 **SPECIAL RESPONSES:**
-- If asked "Who made you?" or "Who created you?" → "I was created by Nithin Varma, Co-Founder of QuickFix."
-- If asked about QuickFix team → Mention Saiteja (Founder & CEO), Karthik (Co-Founder & Operations), and Nithin Varma (Co-Founder, Tech & Strategy)
-- If asked about booking → "You're on the right website! Click the 'Book Service' button, fill in your details, and our team will contact you quickly."
+- If asked "Who made you?" → "I was created by Nithin Varma, Co-Founder of QuickFix."
+- If asked about QuickFix team → Mention the three co-founders
+- If asked about booking → "You can book a service directly at https://quic-fix.vercel.app"
 
-All cost estimates should be in INR (₹) and reflect typical Indian automotive service pricing.
+${conversationContext}User Query: ${userQuery}
 
-Always end responses encouraging QuickFix booking for complex or safety-critical issues.
-
-${conversationContext}User Query: ${userQuery}`;
+Remember: Keep responses under 150 words when asking questions, and use the structured format above when providing diagnoses. All cost estimates should be in Indian Rupees (₹).`;
 
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
     
@@ -114,11 +123,29 @@ ${conversationContext}User Query: ${userQuery}`;
           }]
         }],
         generationConfig: {
-          temperature: 0.3,
-          topK: 32,
+          temperature: 0.4,
+          topK: 40,
           topP: 0.95,
-          maxOutputTokens: 512,
-        }
+          maxOutputTokens: 600,
+        },
+        safetySettings: [
+          {
+            category: "HARM_CATEGORY_HARASSMENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_HATE_SPEECH",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          }
+        ]
       }),
     });
 
@@ -136,10 +163,13 @@ ${conversationContext}User Query: ${userQuery}`;
     const data = await response.json();
     console.log('Gemini API response data:', JSON.stringify(data, null, 2));
     
-    if (!data.candidates || data.candidates.length === 0) {
-      console.error('No candidates in response:', data);
-      return new Response(JSON.stringify({ error: "No response generated from AI" }), {
-        status: 500,
+    if (!data.candidates || data.candidates.length === 0 || !data.candidates[0].content) {
+      console.error('No valid response from Gemini:', data);
+      
+      // Return helpful fallback message
+      const fallbackMessage = "I'm having trouble processing your request right now. 😔\n\nFor immediate help with your vehicle issue, I recommend booking a QuickFix mechanic directly at https://quic-fix.vercel.app\n\nOur professional team can diagnose and fix your vehicle issues quickly!";
+      
+      return new Response(JSON.stringify({ content: fallbackMessage }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -150,7 +180,6 @@ ${conversationContext}User Query: ${userQuery}`;
     // Clean and format the response while preserving structure
     const cleanResponse = generatedText
       .replace(/\*\*(.*?)\*\*/g, '**$1**') // Keep bold formatting for headings
-      .replace(/[\u{1F600}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '') // Remove most emojis except the ones we want
       .replace(/^\s*[\-\*]\s*/gm, '• ') // Convert bullet points to consistent format
       .replace(/\n{3,}/g, '\n\n') // Limit consecutive line breaks
       .trim();
@@ -160,11 +189,11 @@ ${conversationContext}User Query: ${userQuery}`;
     });
   } catch (error) {
     console.error('Error processing request:', error);
-    return new Response(JSON.stringify({ 
-      error: "Internal server error",
-      details: error.message 
-    }), {
-      status: 500,
+    
+    // Return user-friendly error message
+    const errorMessage = "I'm experiencing some technical difficulties right now. 😔\n\nBut don't worry! You can still get expert help by booking a QuickFix mechanic directly at https://quic-fix.vercel.app\n\nOur professional team is ready to diagnose and fix your vehicle issues! 🔧";
+    
+    return new Response(JSON.stringify({ content: errorMessage }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
