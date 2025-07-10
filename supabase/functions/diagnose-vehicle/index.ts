@@ -122,10 +122,10 @@ Always end responses encouraging QuickFix booking for complex or safety-critical
 
 ${conversationContext}User Query: ${userQuery}`;
 
-    // Get OpenRouter API key
-    const openRouterApiKey = Deno.env.get('OPENROUTER_API_KEY');
-    if (!openRouterApiKey) {
-      const errMsg = 'OPENROUTER_API_KEY not set.';
+    // Get Gemini API key
+    const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
+    if (!geminiApiKey) {
+      const errMsg = 'GEMINI_API_KEY not set.';
       console.error(errMsg);
       return new Response(JSON.stringify({ error: errMsg }), {
         status: 500,
@@ -133,48 +133,51 @@ ${conversationContext}User Query: ${userQuery}`;
       });
     }
 
-    console.log(`[${requestId}] Making request to OpenRouter API...`);
+    console.log(`[${requestId}] Making request to Gemini API...`);
     let data;
     let response;
-    // Timeout OpenRouter API after 15 seconds
+    // Timeout Gemini API after 15 seconds
     const fetchWithTimeout = (url: string, options: any, timeout = 15000) => {
       return Promise.race([
         fetch(url, options),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('OpenRouter API timeout')), timeout))
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Gemini API timeout')), timeout))
       ]);
     };
     try {
       response = await fetchWithTimeout(
-        'https://openrouter.ai/api/v1/chat/completions',
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`,
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${openRouterApiKey}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'meta-llama/llama-3.1-8b-instruct:free',
-            messages: [{
-              role: 'user',
-              content: systemPrompt
+            contents: [{
+              parts: [{
+                text: systemPrompt
+              }]
             }],
-            temperature: 0.3,
-            max_tokens: 512,
+            generationConfig: {
+              temperature: 0.3,
+              maxOutputTokens: 512,
+              topP: 0.8,
+              topK: 40
+            }
           }),
         },
         15000
       );
       if (!(response && typeof response === 'object' && 'ok' in response)) {
-        throw new Error('No response from OpenRouter API');
+        throw new Error('No response from Gemini API');
       }
-      console.log(`[${requestId}] OpenRouter API response status:`, response.status);
+      console.log(`[${requestId}] Gemini API response status:`, response.status);
       if (!response.ok) {
         const errorText = await response.text();
         let userFriendly = 'Unknown error.';
-        if (errorText.includes('quota')) userFriendly = 'OpenRouter API quota exceeded.';
-        if (errorText.includes('rate limit')) userFriendly = 'OpenRouter API rate limit reached.';
-        if (errorText.includes('API key')) userFriendly = 'OpenRouter API key invalid or missing.';
-        const errMsg = `[${requestId}] OpenRouter API error: ${userFriendly} (raw: ${errorText})`;
+        if (errorText.includes('quota')) userFriendly = 'Gemini API quota exceeded.';
+        if (errorText.includes('rate limit')) userFriendly = 'Gemini API rate limit reached.';
+        if (errorText.includes('API key')) userFriendly = 'Gemini API key invalid or missing.';
+        const errMsg = `[${requestId}] Gemini API error: ${userFriendly} (raw: ${errorText})`;
         console.error(errMsg);
         return new Response(JSON.stringify({ error: errMsg, requestId }), {
           status: 500,
@@ -182,9 +185,9 @@ ${conversationContext}User Query: ${userQuery}`;
         });
       }
       data = await response.json();
-      console.log(`[${requestId}] OpenRouter API response data:`, JSON.stringify(data, null, 2));
+      console.log(`[${requestId}] Gemini API response data:`, JSON.stringify(data, null, 2));
     } catch (apiError) {
-      const errMsg = `[${requestId}] OpenRouter API fetch failed: ${apiError}`;
+      const errMsg = `[${requestId}] Gemini API fetch failed: ${apiError}`;
       console.error(errMsg);
       return new Response(JSON.stringify({ error: errMsg, requestId }), {
         status: 500,
@@ -192,15 +195,15 @@ ${conversationContext}User Query: ${userQuery}`;
       });
     }
 
-    if (!data || !data.choices || !Array.isArray(data.choices) || data.choices.length === 0 || !data.choices[0].message?.content) {
-      const errMsg = `[${requestId}] No valid choices in OpenRouter API response: ${JSON.stringify(data)}`;
+    if (!data || !data.candidates || !Array.isArray(data.candidates) || data.candidates.length === 0 || !data.candidates[0].content?.parts?.[0]?.text) {
+      const errMsg = `[${requestId}] No valid candidates in Gemini API response: ${JSON.stringify(data)}`;
       console.error(errMsg);
       return new Response(JSON.stringify({ error: errMsg, requestId }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
-    const generatedText = data.choices[0].message.content;
+    const generatedText = data.candidates[0].content.parts[0].text;
     console.log(`[${requestId}] Generated text:`, generatedText);
 
     // Clean and format the response while preserving structure
