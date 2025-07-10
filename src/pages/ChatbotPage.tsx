@@ -161,6 +161,47 @@ const ChatbotPage: React.FC = () => {
     toast.success("Chat history cleared!");
   };
 
+  // Function to format AI response content with enhanced headings
+  const formatAIContent = (content: string) => {
+    // Split content by lines
+    const lines = content.split('\n');
+    
+    return lines.map((line, index) => {
+      // Check if line is a heading with emojis and key formatting
+      if (line.match(/^(🔍|🛠️|⚠️|💰|🚨|📞|🤖|🔧|💡|ℹ️|✅|❌|🎯|📋)\s*\*\*(.+?)\*\*/) || 
+          line.match(/^\*\*(🔍|🛠️|⚠️|💰|🚨|📞|🤖|🔧|💡|ℹ️|✅|❌|🎯|📋)(.+?)\*\*/)) {
+        const cleanLine = line.replace(/\*\*/g, '').trim();
+        return (
+          <div key={index} className="font-bold text-gray-900 text-base mb-2 mt-3 first:mt-0 border-l-4 border-quickfix-blue pl-3 bg-gray-50/80 py-2 rounded-r-md">
+            {cleanLine}
+          </div>
+        );
+      }
+      
+      // Check for other bold headings
+      if (line.match(/^\*\*(.+?)\*\*/) && line.trim().length < 50) {
+        const cleanLine = line.replace(/\*\*/g, '').trim();
+        return (
+          <div key={index} className="font-semibold text-gray-800 text-sm mb-2 mt-2 first:mt-0">
+            {cleanLine}
+          </div>
+        );
+      }
+      
+      // Regular content lines
+      if (line.trim()) {
+        return (
+          <div key={index} className="text-gray-700 leading-relaxed mb-1">
+            {line}
+          </div>
+        );
+      }
+      
+      // Empty lines for spacing
+      return <div key={index} className="h-2"></div>;
+    });
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-quickfix-light-blue/20 to-white">
       <Navbar />
@@ -234,7 +275,12 @@ const ChatbotPage: React.FC = () => {
                               : 'bg-white/80 backdrop-blur-lg text-gray-800 border border-gray-200/50 shadow-lg'
                         }`}
                       >
-                        <div className="whitespace-pre-wrap leading-relaxed">{message.content}</div>
+                        <div className="leading-relaxed">
+                          {message.role === 'assistant' ? 
+                            formatAIContent(message.content) : 
+                            <div className="whitespace-pre-wrap">{message.content}</div>
+                          }
+                        </div>
                         <div className={`text-xs mt-2 ${message.role === 'user' ? 'text-blue-200' : 'text-gray-500'}`}>
                           {formatTime(message.timestamp)}
                         </div>
