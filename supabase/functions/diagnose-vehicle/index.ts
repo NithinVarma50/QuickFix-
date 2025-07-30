@@ -25,12 +25,20 @@ serve(async (req) => {
     let messages: any[] = [];
     try {
       const body = await req.json();
-      if (!body || !Array.isArray(body.messages)) {
-        throw new Error('Invalid request: messages array missing');
+      console.log(`[${requestId}] Raw request body:`, JSON.stringify(body));
+      
+      if (!body) {
+        throw new Error('Empty request body');
       }
+      
+      if (!body.messages || !Array.isArray(body.messages)) {
+        console.error(`[${requestId}] Invalid body structure:`, body);
+        throw new Error('Invalid request: messages array missing or not an array');
+      }
+      
       messages = body.messages;
     } catch (parseErr) {
-      const errMsg = `[${requestId}] Invalid JSON or missing messages: ${parseErr}`;
+      const errMsg = `[${requestId}] JSON parse or validation error: ${parseErr}`;
       console.error(errMsg);
       return new Response(JSON.stringify({ error: errMsg, requestId }), {
         status: 400,
