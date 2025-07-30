@@ -136,8 +136,8 @@ ${conversationContext}User Query: ${userQuery}`;
     console.log(`[${requestId}] Making request to Gemini API...`);
     let data;
     let response;
-    // Timeout Gemini API after 15 seconds
-    const fetchWithTimeout = (url: string, options: any, timeout = 15000) => {
+    // Timeout Gemini API after 8 seconds to avoid edge function timeout
+    const fetchWithTimeout = (url: string, options: any, timeout = 8000) => {
       return Promise.race([
         fetch(url, options),
         new Promise((_, reject) => setTimeout(() => reject(new Error('Gemini API timeout')), timeout))
@@ -159,13 +159,13 @@ ${conversationContext}User Query: ${userQuery}`;
             }],
             generationConfig: {
               temperature: 0.3,
-              maxOutputTokens: 512,
+              maxOutputTokens: 300,
               topP: 0.8,
               topK: 40
             }
           }),
         },
-        15000
+        8000
       );
       if (!(response && typeof response === 'object' && 'ok' in response)) {
         throw new Error('No response from Gemini API');
