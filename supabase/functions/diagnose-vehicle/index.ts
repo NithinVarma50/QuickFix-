@@ -23,6 +23,7 @@ serve(async (req) => {
     // Add a unique request ID for easier tracking
     const requestId = Math.random().toString(36).substring(2, 10) + Date.now();
     let messages: any[] = [];
+    
     try {
       const body = await req.json();
       console.log(`[${requestId}] Raw request body:`, JSON.stringify(body));
@@ -31,9 +32,20 @@ serve(async (req) => {
         throw new Error('Empty request body');
       }
       
-      if (!body.messages || !Array.isArray(body.messages)) {
-        console.error(`[${requestId}] Invalid body structure:`, body);
-        throw new Error('Invalid request: messages array missing or not an array');
+      // Check if messages array exists and is valid
+      if (!body.messages) {
+        console.error(`[${requestId}] No messages field in body:`, body);
+        throw new Error('Invalid request: messages field missing');
+      }
+      
+      if (!Array.isArray(body.messages)) {
+        console.error(`[${requestId}] Messages is not an array:`, typeof body.messages);
+        throw new Error('Invalid request: messages must be an array');
+      }
+      
+      if (body.messages.length === 0) {
+        console.error(`[${requestId}] Empty messages array`);
+        throw new Error('Invalid request: messages array is empty');
       }
       
       messages = body.messages;
@@ -66,20 +78,38 @@ serve(async (req) => {
       conversationContext += '\nCurrent query:\n';
     }
 
-    // Simplified system prompt for faster processing
-    const systemPrompt = `You are QuickFix AI, a vehicle diagnostic assistant. 
+    // Enhanced system prompt based on training data
+    const systemPrompt = `You are QuickFix AI, created by Nithin Varma (Co-Founder, COO & Tech Architect of QuickFix). You only answer about vehicles, QuickFix, and the QuickFix team. 
 
-Respond to vehicle issues with:
+QUICKFIX TEAM:
+- Saiteja (Founder & CEO): Vision, innovation, partnerships, pricing, expansion
+- Karthik (Co-Founder & Operations Lead): On-ground logistics, pickups, drops, customer relations
+- Nithin Varma (Co-Founder, COO & Tech Architect): Created QuickFix AI, platform development, scaling strategy
+- Philip (R&D Associate): Tests ideas, finds flaws, ensures features are practical
+
+QUICKFIX CURRENT MODEL:
+1. Book online at https://quic-fix.vercel.app
+2. We pick up your vehicle from your location
+3. Trusted partner mechanics repair it
+4. We deliver it back once complete
+
+FUTURE PLAN:
+🚐 Mobile Repair Vans (10-minute doorstep service)
+🛠️ Franchise Model (mechanics own vans with QuickFix branding)
+🏪 Dark Stores (supply hubs for vans)
+
+For vehicle issues, respond with:
 🔍 **POSSIBLE CAUSES:** 1-2 likely causes
-🛠️ **BASIC CHECKS:** Safe user checks only  
-⚠️ **SAFETY:** Important warnings when needed
+🛠️ **BASIC CHECKS:** Safe user checks only
+⚠️ **SAFETY:** Important warnings when needed  
 💰 **COST:** Indian pricing (₹)
-🚨 **URGENCY:** Low/Medium/High/Critical
-📞 **ACTION:** "Book QuickFix service for professional help"
+✅ **RECOMMENDATION:** Book QuickFix service for professional repair
 
-Keep under 100 words. For non-vehicle questions: "I help with vehicle issues only."
+For non-vehicle questions: "I am QuickFix AI — I only answer questions about vehicles, QuickFix, and our startup. 🚗🔧"
 
-User: ${userQuery}`;
+Keep responses under 150 words. Always end with suggesting QuickFix booking.
+
+${conversationContext}User: ${userQuery}`;
 
     // Get Gemini API key
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
